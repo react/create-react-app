@@ -14,6 +14,34 @@ require_once __DIR__ . '/booking-extras.php';
  */
 
 const BOOKING_STATUSES  = ['Enquiry', 'Confirmed', 'Ready', 'Active', 'Returned', 'Completed', 'Cancelled'];
+
+/**
+ * What each status is called on screen.
+ *
+ * The stored values do not change. They are in the bookings ENUM, in every
+ * row already written, in the audit log, in the reports and in the
+ * confirmation PDF; renaming them would be a migration touching all of it to
+ * change a word. So the column keeps Confirmed and Active, and the panel
+ * says Upcoming and On rental, which is what the people using it say.
+ *
+ * Enquiry has no new name because it is not part of the hire: it is a
+ * booking that has not been agreed yet.
+ */
+const BOOKING_STATUS_LABELS = [
+    'Enquiry'   => 'Enquiry',
+    'Confirmed' => 'Upcoming',
+    'Ready'     => 'Handover pending',
+    'Active'    => 'On rental',
+    'Returned'  => 'Return pending',
+    'Completed' => 'Completed',
+    'Cancelled' => 'Cancelled',
+];
+
+/** The on-screen name for a stored status, or the status itself if unknown. */
+function booking_status_label(string $status): string
+{
+    return BOOKING_STATUS_LABELS[$status] ?? $status;
+}
 const BLOCKING_STATUSES = ['Confirmed', 'Ready', 'Active'];
 const PAYMENT_KINDS     = ['advance', 'balance', 'additional', 'extra_km'];
 
