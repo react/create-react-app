@@ -125,6 +125,15 @@ document.querySelectorAll('.admin-tab').forEach((tab) => {
       document.getElementById(`panel-${name}`).hidden = target !== name;
     });
 
+    // Upcoming and On rental are the bookings list with its filter already
+    // set: two entries in the sidebar rather than one, because they are two
+    // different questions -- what is coming in, and what is out right now --
+    // and a driver should not have to find the chip for either. Everything
+    // else about the panel is the same list, so there is one of it.
+    if (target === 'bookings' && typeof setBookingStatusFilter === 'function') {
+      setBookingStatusFilter(tab.dataset.status || 'all');
+    }
+
     // Put the panel in the address bar, so refreshing stays where you were
     // and a tab can be linked to or left open in a second window.
     //
@@ -1775,12 +1784,54 @@ function renderRecTable(opts) {
 // has already filtered would be counting the rows on screen.
 
 let bookingStatusFilter = 'all';
+
+/** Point the bookings list at one status, from the sidebar or a chip. */
+function setBookingStatusFilter(value) {
+  bookingStatusFilter = value;
+  if (typeof bookingView === 'object' && bookingView) bookingView.page = 1;
+  renderBookingList();
+}
 let bookingSearch = '';
 const bookingView = { sort: 'start_at', dir: 'desc', page: 1, perPage: 30 };
 
+/* ---------------------------------------------------------------------------
+   What a booking's status is called on screen.
+
+   Mirrors BOOKING_STATUS_LABELS in admin/src/booking.php. The stored values
+   do not change -- they are in the ENUM, in every row already written, in the
+   audit log, the reports and the confirmation PDF -- so the column keeps
+   Confirmed and Active while the panel says Upcoming and On rental, which is
+   what the people using it say.
+
+   The CSS class still uses the stored value, so the colours do not move.
+--------------------------------------------------------------------------- */
+const BOOKING_STATUS_LABELS = {
+  Enquiry: 'Enquiry',
+  Confirmed: 'Upcoming',
+  Ready: 'Handover pending',
+  Active: 'On rental',
+  Returned: 'Return pending',
+  Completed: 'Completed',
+  Cancelled: 'Cancelled',
+};
+
+const statusLabel = (s) => BOOKING_STATUS_LABELS[s] || s;
+
+/** A status badge, labelled for a person and classed for the stylesheet. */
+const statusBadge = (s) =>
+  `<span class="status-badge status-badge-${escapeHTML(s)}">${escapeHTML(statusLabel(s))}</span>`;
+
+/* Every state of a hire, in the order it goes through them. Handover pending
+   and Return pending were not filterable before, which is why a booking
+   sitting in either was only findable under All. */
 const BOOKING_CHIPS = [
-  ['all', 'All'], ['Confirmed', 'Confirmed'], ['Active', 'On rental'],
-  ['Completed', 'Completed'], ['Cancelled', 'Cancelled'],
+  ['all', 'All'],
+  ['Confirmed', 'Upcoming'],
+  ['Ready', 'Handover pending'],
+  ['Active', 'On rental'],
+  ['Returned', 'Return pending'],
+  ['Completed', 'Completed'],
+  ['Cancelled', 'Cancelled'],
 ];
 
 document.getElementById('bookingSearch')?.addEventListener('input', debounce((e) => {
@@ -1885,7 +1936,7 @@ async function renderBookingList() {
         cell: (b) => `${b.duration_days} day${Number(b.duration_days) === 1 ? '' : 's'}` },
       { key: 'status', label: 'Status', sort: (b) => b.status,
         cell: (b) => `<span class="rec-line-chips">
-                        <span class="status-badge status-badge-${b.status}">${b.status}</span>
+                        ${statusBadge(b.status)}
                         ${scheduleChipHTML(b, { quiet: true })}
                       </span>` },
       { key: 'balance', label: 'Balance', sort: (b) => Number(b.balance), cls: 'rec-money',
@@ -2971,7 +3022,7 @@ async function renderBookingDetail(id) {
         <span class="rec-avatar">${escapeHTML(initials)}</span>
         <div class="rec-hero-id">
           <h2>${escapeHTML(booking.booking_number)}
-            <span class="status-badge status-badge-${booking.status}">${booking.status}</span>
+            ${statusBadge(booking.status)}
             ${scheduleChipHTML(booking)}
             <!-- Whether the money is in is the other half of "how is this
                  booking doing", and it belongs beside the status rather than
@@ -4407,7 +4458,7 @@ function renderRentalOverview() {
           <span class="booking-card-meta">${vehicleLabel(b.vehicle_id)} · ${formatDate(b.start_at)} → ${formatDate(b.return_at)}</span>
         </div>
         <span class="status-stack">
-          <span class="status-badge status-badge-${b.status}">${b.status}</span>
+          ${statusBadge(b.status)}
           ${scheduleChipHTML(b)}
         </span>
       </div>`).join('')

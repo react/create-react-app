@@ -33,6 +33,11 @@ function admin_nav_groups(): array
         'Running the day' => [
             ['tab' => 'dashboard', 'label' => 'Dashboard', 'icon' => 'chart'],
             ['tab' => 'bookings',  'label' => 'Bookings',  'icon' => 'clipboard', 'count' => 'bookingCount', 'can' => 'booking.view'],
+            // The same list with its filter already set. Two questions, not
+            // one: what is coming in, and what is out right now. A driver
+            // standing at the car should not have to find a chip for either.
+            ['tab' => 'bookings',  'label' => 'Upcoming',  'icon' => 'clipboard', 'status' => 'Confirmed', 'can' => 'booking.view'],
+            ['tab' => 'bookings',  'label' => 'On rental', 'icon' => 'car',   'status' => 'Active',    'can' => 'booking.view'],
             ['tab' => 'cars',      'label' => 'Vehicles',  'icon' => 'car',       'can' => 'vehicle.view'],
             ['tab' => 'inquiries', 'label' => 'Inquiries', 'icon' => 'inbox',     'count' => 'inquiryCount', 'can' => 'enquiry.view'],
         ],
@@ -169,7 +174,7 @@ function admin_shell_open(
         <?php foreach ($items as $item): ?>
           <?php
           $key    = $item['tab'] ?? $item['page'];
-          $active = $key === $current ? ' is-on' : '';
+          $active = ($key === $current && !isset($item['status'])) ? ' is-on' : '';
           $inner  = admin_nav_icon($item['icon'])
               . '<span class="ns-item-label">' . e($item['label']) . '</span>'
               . (isset($item['count'])
@@ -177,7 +182,7 @@ function admin_shell_open(
                   : '');
           ?>
           <?php if (isset($item['tab']) && $onDashboard): ?>
-            <button class="ns-item admin-tab<?= $active ?>" type="button" data-tab="<?= e($item['tab']) ?>"><?= $inner ?></button>
+            <button class="ns-item admin-tab<?= $active ?>" type="button" data-tab="<?= e($item['tab']) ?>"<?= isset($item['status']) ? ' data-status="' . e($item['status']) . '"' : '' ?>><?= $inner ?></button>
           <?php else: ?>
             <a class="ns-item<?= $active ?>" href="<?= e($item['page'] ?? $tabHref($item['tab'])) ?>"><?= $inner ?></a>
           <?php endif; ?>

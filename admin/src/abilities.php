@@ -166,6 +166,17 @@ function role_can(string $role, string $ability): bool
         'staff'       => ['booking.view', 'booking.create', 'vehicle.view',
                           'enquiry.view', 'enquiry.create', 'km.create',
                           'reminder.view', 'reminder.create', 'reminder.edit'],
+        // The person who actually hands the car over and takes it back. They
+        // need to see what is coming, open the booking in front of them, do
+        // the handover and the return, and read the odometer -- and nothing
+        // else. No money, no fleet editing, no customer records beyond the
+        // booking they are standing next to.
+        //
+        // booking.complete is what the pickup and return both guard on, so a
+        // driver who cannot have it cannot do the job. booking.create is here
+        // for the walk-in they take without an office booking first.
+        'driver'      => ['booking.view', 'booking.create', 'booking.complete',
+                          'vehicle.view', 'km.create'],
     ];
 
     foreach ($abilities[$role] ?? [] as $granted) {
