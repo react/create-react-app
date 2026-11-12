@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
-import { dailyRate, orDash, type Car } from '../data/cars';
-import modelData from '../data/models.json';
+import { dailyRate, orDash } from '../data/cars';
 import { useFleet } from '../lib/useFleet';
 import { PageHeader } from './PageHeader';
 import { BrandPanel } from '../components/BrandPanel';
@@ -10,13 +9,6 @@ import tariffFaq from '../data/tariff-faq.json';
 // questions this page shows and the ones in its structured data cannot
 // disagree about which of the panel's the home page already answered.
 import { HOME_FAQ_SHOWN } from '../data/faq-shown.mjs';
-
-/** The page written about this vehicle, if there is one. */
-function modelPath(car: Car): string | null {
-  const label = `${car.brand} ${car.name}`.toLowerCase();
-  const model = modelData.models.find((m) => label.includes(m.match.toLowerCase()));
-  return model ? `/cars/${model.slug}` : null;
-}
 
 export function Tariff() {
   const fleet = useFleet();
@@ -57,19 +49,7 @@ export function Tariff() {
                 {cars.map((car) => (
                   <tr key={car.id} className="border-b border-line/70 last:border-0">
                     <th scope="row" className="px-5 py-4 font-semibold text-navy">
-                      {/* A rate table is where somebody compares, and the
-                          next question after "how much" is "what is it
-                          like" -- so the name is the way through to the
-                          page that answers it. */}
-                      {modelPath(car) ? (
-                        <Link to={modelPath(car)!} className="tap-target transition hover:text-gold-deep">
-                          {car.brand} {car.name}
-                        </Link>
-                      ) : (
-                        <>
-                          {car.brand} {car.name}
-                        </>
-                      )}
+                      {car.brand} {car.name}
                       <span className="block text-xs font-normal text-ink-faint">
                         {car.bodyType} · {car.fuel} · {car.transmission}
                       </span>

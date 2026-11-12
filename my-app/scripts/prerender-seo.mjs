@@ -21,8 +21,6 @@ import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { createHash } from 'node:crypto';
 import { allTownRoutes, TOWN_BASE } from '../src/data/town-routes.mjs';
-import { modelRoutes, MODEL_BASE } from '../src/data/model-routes.mjs';
-import { serviceAreaRoutes, serviceAreaPath } from '../src/data/service-area-routes.mjs';
 import { postRoutes, BLOG_BASE } from '../src/data/post-routes.mjs';
 import { HOME_FAQ_SHOWN } from '../src/data/faq-shown.mjs';
 
@@ -60,15 +58,6 @@ const seo = JSON.parse(readFileSync(join(root, 'src/data/seo.json'), 'utf8'));
 // so a town added there gets its page, its tags and its line in the sitemap
 // without a second list being edited.
 const towns = JSON.parse(readFileSync(join(root, 'src/data/towns.json'), 'utf8'));
-// And one per vehicle people ask for by name, for the same reason.
-const models = JSON.parse(readFileSync(join(root, 'src/data/models.json'), 'utf8'));
-// The vehicle list as baked in by fetch-fleet.mjs, so a car page's structured
-// data can carry the rate when the panel has published one.
-const fleet = JSON.parse(readFileSync(join(root, 'src/data/fleet.json'), 'utf8'));
-// And one per service-in-a-town pair worth having a page of its own.
-const serviceAreas = JSON.parse(
-  readFileSync(join(root, 'src/data/service-areas.json'), 'utf8'),
-);
 // And one per article.
 const blog = JSON.parse(readFileSync(join(root, 'src/data/posts.json'), 'utf8'));
 // Composed by scripts/seo-routes.mjs, which runs before the bundle is built
@@ -512,18 +501,6 @@ function postFor(route) {
   return blog.posts.find((post) => post.slug === slug) ?? null;
 }
 
-/** The service-in-a-town page a route is about, or null. */
-function serviceAreaFor(route) {
-  return serviceAreas.pages.find((page) => serviceAreaPath(page) === route.path) ?? null;
-}
-
-/** The car a route is about, or null for the pages that are not about one. */
-function modelFor(route) {
-  if (!route.path.startsWith(MODEL_BASE + '/')) return null;
-  const slug = route.path.slice(MODEL_BASE.length + 1);
-  return models.models.find((m) => m.slug === slug) ?? null;
-}
-
 /**
  * The trail from the home page to this one, as Google shows it.
  *
@@ -547,17 +524,11 @@ function breadcrumbFor(route) {
   // threw away the only word that distinguishes one of these pages from the
   // other eleven, and left twelve trails all ending "Self Drive Car Rental".
   const town = townFor(route);
-  const model = modelFor(route);
-  const area = serviceAreaFor(route);
   const post = postFor(route);
   const leaf = town
     ? town.name
-    : model
-      ? model.name
-      : area
-        ? area.town
-        : post
-          ? post.title
+    : post
+      ? post.title
           : route.path === TOWN_BASE
             ? 'Where we deliver'
             : route.title.split(/\s—\s|\sin\s/)[0].trim();
@@ -579,17 +550,6 @@ function breadcrumbFor(route) {
     });
   }
 
-  // And a car page sits under the listing every car appears on, for the same
-  // reason: "niteshacars.in > Our cars > Maruti Suzuki Swift" says this is one
-  // of a fleet rather than the whole of a site.
-  if (route.path.startsWith(MODEL_BASE + '/')) {
-    trail.push({
-      '@type': 'ListItem',
-      position: 2,
-      name: 'Our cars',
-      item: seo.site.origin + MODEL_BASE,
-    });
-  }
 
   // An article sits under the blog.
   if (post) {
@@ -598,17 +558,6 @@ function breadcrumbFor(route) {
       position: 2,
       name: 'Blog',
       item: seo.site.origin + BLOG_BASE,
-    });
-  }
-
-  // A service-in-a-town page sits under its service: "niteshacars.in >
-  // Bike and scooter rental > Kanyakumari".
-  if (area) {
-    trail.push({
-      '@type': 'ListItem',
-      position: 2,
-      name: area.service,
-      item: seo.site.origin + area.base,
     });
   }
 
@@ -631,28 +580,6 @@ function breadcrumbFor(route) {
  * business's @id rather than repeating it, so there is still one business.
  */
 function townServiceFor(route) {
-  // A service-in-a-town page makes the same claim, but narrower: this one
-  // service, in this one town, which is exactly the search it answers.
-  const area = serviceAreaFor(route);
-  if (area) {
-    return {
-      '@context': 'https://schema.org',
-      '@type': 'Service',
-      name: `${area.service} in ${area.town}`,
-      serviceType: area.service,
-      provider: { '@id': seo.site.origin + '#business' },
-      areaServed: {
-        '@type': 'City',
-        name: area.town,
-        containedInPlace: {
-          '@type': 'AdministrativeArea',
-          name: `${seo.site.district} district`,
-        },
-      },
-      url: seo.site.origin + route.path,
-    };
-  }
-
   const town = townFor(route);
   if (!town) return null;
 
@@ -686,37 +613,6 @@ function townServiceFor(route) {
 const FAQ_ROUTES = new Set(['/', '/tariff']);
 
 function faqFor(route) {
-  // A car page asks and answers its own three, and renders every one of them,
-  // so the same rule is satisfied by reading them from the same file the page
-  // does.
-  const model = modelFor(route);
-  if (model) {
-    return {
-      '@context': 'https://schema.org',
-      '@type': 'FAQPage',
-      '@id': seo.site.origin + route.path + '#faq',
-      mainEntity: model.faq.map((item) => ({
-        '@type': 'Question',
-        name: item.question,
-        acceptedAnswer: { '@type': 'Answer', text: item.answer },
-      })),
-    };
-  }
-
-  // As do the service-in-a-town pages, which render theirs in full.
-  const area = serviceAreaFor(route);
-  if (area) {
-    return {
-      '@context': 'https://schema.org',
-      '@type': 'FAQPage',
-      '@id': seo.site.origin + route.path + '#faq',
-      mainEntity: area.faq.map((item) => ({
-        '@type': 'Question',
-        name: item.question,
-        acceptedAnswer: { '@type': 'Answer', text: item.answer },
-      })),
-    };
-  }
 
   if (!FAQ_ROUTES.has(route.path)) return null;
 
@@ -751,63 +647,6 @@ function faqFor(route) {
   };
 }
 
-/**
- * The vehicle a car page is about.
- *
- * schema.org has a type for this and the page is entirely about one car, so
- * saying so costs a few hundred bytes and tells a crawler that "Rumion" is a
- * seven-seat petrol vehicle rather than a word in a heading.
- *
- * No price attached. The rate lives in the panel, it is not always published,
- * and an offer carrying a figure nobody typed is worse than an offer missing.
- * When the panel does carry one the build has it here, and it is quoted per
- * day, which is the unit a rental is actually offered in.
- */
-function vehicleFor(route) {
-  const model = modelFor(route);
-  if (!model) return null;
-
-  const data = {
-    '@context': 'https://schema.org',
-    '@type': 'Car',
-    '@id': seo.site.origin + route.path + '#vehicle',
-    name: model.name,
-    url: seo.site.origin + route.path,
-    description: model.intro,
-    vehicleConfiguration: model.bodyType,
-    fuelType: model.fuel,
-    vehicleTransmission: model.transmission,
-    vehicleSeatingCapacity: {
-      '@type': 'QuantitativeValue',
-      value: model.seats,
-    },
-  };
-
-  const brand = String(model.name).split(' ')[0];
-  if (brand) data.brand = { '@type': 'Brand', name: brand };
-
-  const car = fleet.vehicles.find((v) =>
-    `${v.brand} ${v.name}`.toLowerCase().includes(model.match.toLowerCase()),
-  );
-  if (car && car.rateDaily > 0) {
-    data.offers = {
-      '@type': 'Offer',
-      availability: 'https://schema.org/InStock',
-      priceCurrency: 'INR',
-      priceSpecification: {
-        '@type': 'UnitPriceSpecification',
-        price: car.rateDaily,
-        priceCurrency: 'INR',
-        unitCode: 'DAY',
-        referenceQuantity: { '@type': 'QuantitativeValue', value: 1, unitCode: 'DAY' },
-      },
-      seller: { '@id': seo.site.origin + '#business' },
-      url: seo.site.origin + route.path,
-    };
-  }
-
-  return data;
-}
 
 /**
  * The article itself.
@@ -935,7 +774,6 @@ const PAGE_MODULE = new Map([
 /** The generated families, matched by prefix after the fixed paths. */
 const PAGE_MODULE_BY_PREFIX = [
   [TOWN_BASE + '/', 'src/pages/Town.tsx'],
-  [MODEL_BASE + '/', 'src/pages/CarModel.tsx'],
   [BLOG_BASE + '/', 'src/pages/Post.tsx'],
 ];
 
@@ -958,7 +796,7 @@ function moduleFor(route) {
 
   // Everything else is a service-in-a-town page, which lives under its own
   // service (/bikes/kanyakumari) and so cannot be matched by one prefix.
-  return serviceAreaFor(route) ? 'src/pages/ServiceArea.tsx' : null;
+  return null;
 }
 
 /** <link rel="modulepreload"> for this route's chunk, and its CSS if it has any. */
@@ -1003,7 +841,6 @@ let written = 0;for (const route of routes) {
   const extra = [
     breadcrumbFor(route),
     townServiceFor(route),
-    vehicleFor(route),
     articleFor(route),
     faqFor(route),
     ...(publisherFor(route) ?? []),

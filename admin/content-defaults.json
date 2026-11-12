@@ -8,7 +8,7 @@
       "imageAlt": "Self-drive rental car in Nagercoil, Kanyakumari district",
       "intro": "Self drive cars, bike rental, wedding cars and tourist vehicles with a driver — across Nagercoil, Marthandam, Colachel and the whole of Kanyakumari district. Transparent rates and a deposit you get back.",
       "primaryLabel": "Browse the fleet",
-      "primaryHref": "/cars",
+      "primaryHref": "/tariff",
       "secondaryLabel": "Check availability",
       "secondaryHref": "/contact#enquire",
       "formTitle": "Check a date",
@@ -196,7 +196,7 @@
       "primaryLabel": "Send an enquiry",
       "primaryHref": "/contact",
       "secondaryLabel": "See our cars",
-      "secondaryHref": "/cars"
+      "secondaryHref": "/tariff"
     },
     "footer": {
       "blurb": "Self drive cars, bike rental, wedding cars and tourist vehicles across Kanyakumari district.",

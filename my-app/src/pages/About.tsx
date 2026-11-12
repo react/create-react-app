@@ -32,19 +32,19 @@ export function About() {
           <p>
             We are based in {seo.site.city} and work across the whole of{' '}
             {seo.site.district} district. Four things, under one roof:{' '}
-            <Link to="/cars" className="font-semibold text-navy hover:text-gold-deep">
+            <Link to="/services#cars" className="font-semibold text-navy hover:text-gold-deep">
               self drive cars
             </Link>{' '}
             for people who would rather drive themselves,{' '}
-            <Link to="/bikes" className="font-semibold text-navy hover:text-gold-deep">
+            <Link to="/services#bikes" className="font-semibold text-navy hover:text-gold-deep">
               bikes
             </Link>{' '}
             for getting around town,{' '}
-            <Link to="/wedding-cars" className="font-semibold text-navy hover:text-gold-deep">
+            <Link to="/services#wedding-cars" className="font-semibold text-navy hover:text-gold-deep">
               wedding cars
             </Link>{' '}
             for the day it matters, and{' '}
-            <Link to="/tourist-vehicles" className="font-semibold text-navy hover:text-gold-deep">
+            <Link to="/services#tourist-vehicles" className="font-semibold text-navy hover:text-gold-deep">
               tourist vehicles with a driver
             </Link>{' '}
             for sightseeing.

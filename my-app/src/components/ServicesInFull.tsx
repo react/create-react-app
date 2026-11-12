@@ -5,6 +5,7 @@ import { useHome } from '../content';
 import { Reveal } from './Reveal';
 import { SectionArt } from './art/SectionArt';
 import { hasScene } from './art/scenes';
+import { anchorFor } from '../lib/serviceAnchor';
 
 /**
  * Everything we hire, in full, on one page.
@@ -23,11 +24,6 @@ import { hasScene } from './art/scenes';
  * The words are the panel's: the same list the home page and the footer read,
  * so a service added there arrives in all three.
  */
-
-/** "/wedding-cars" -> "wedding-cars", which is what the jump buttons target. */
-function anchorFor(to: string): string {
-  return to.replace(/^\/+/, '').replace(/[^a-z0-9-]/gi, '-');
-}
 
 function Tick() {
   return (
@@ -122,16 +118,13 @@ export function ServicesInFull() {
                   </ul>
                 ) : null}
 
+                {/* "X, in detail" went to the service's own page. Those are
+                    gone and this section is that detail, so what is left is
+                    the one thing somebody reading it might want to do. */}
                 <div className="mt-7 flex flex-wrap gap-3">
                   <Link
-                    to={s.to}
-                    className="rounded-xl bg-navy px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-navy/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold sm:text-base"
-                  >
-                    {s.title}, in detail
-                  </Link>
-                  <Link
                     to="/contact#enquire"
-                    className="rounded-xl border border-line px-5 py-2.5 text-sm font-semibold text-ink-dim transition hover:border-navy/40 hover:text-navy sm:text-base"
+                    className="rounded-xl bg-navy px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-navy/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold sm:text-base"
                   >
                     Check availability
                   </Link>

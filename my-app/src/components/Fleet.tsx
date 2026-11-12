@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { dailyRate, inr, orDash, type BodyType, type Car } from '../data/cars';
-import modelData from '../data/models.json';
+import { dailyRate, inr, orDash, type BodyType } from '../data/cars';
 import { carPhoto } from '../lib/carPhoto';
 import { useFleet } from '../lib/useFleet';
 import { SectionArt } from './art/SectionArt';
@@ -16,14 +15,9 @@ const filters: Filter[] = ['All', 'Hatchback', 'Sedan', 'SUV', 'MUV'];
  *
  * The listing used to be the end of the road: a card, a price and an enquiry
  * button, with nothing to click for somebody still deciding between two of
- * them. Where a car has a page of its own, the card leads to it -- which is
- * also how a crawler reaches those pages from the listing they belong to.
+ * them. The cars had a page each and they are gone, so the card names the car
+ * and the enquiry is what it leads to.
  */
-function modelPath(car: Car): string | null {
-  const label = `${car.brand} ${car.name}`.toLowerCase();
-  const model = modelData.models.find((m) => label.includes(m.match.toLowerCase()));
-  return model ? `/cars/${model.slug}` : null;
-}
 
 export function Fleet() {
   const [filter, setFilter] = useState<Filter>('All');
@@ -83,7 +77,6 @@ export function Fleet() {
         {shown.map((car, i) => {
           const label = `${car.brand} ${car.name}`;
           const photo = carPhoto(car);
-          const detail = modelPath(car);
           return (
             <Reveal key={car.id} delay={i * 70}>
             <article
@@ -116,15 +109,7 @@ export function Fleet() {
                 <p className="text-xs font-semibold tracking-wide text-ink-faint uppercase">
                   {car.brand}
                 </p>
-                <h3 className="mt-0.5 text-lg font-semibold text-navy">
-                  {detail ? (
-                    <Link to={detail} className="transition hover:text-gold-deep">
-                      {car.name}
-                    </Link>
-                  ) : (
-                    car.name
-                  )}
-                </h3>
+                <h3 className="mt-0.5 text-lg font-semibold text-navy">{car.name}</h3>
 
                 <dl className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm text-ink-dim">
                   <div className="flex gap-1.5">
@@ -184,17 +169,6 @@ export function Fleet() {
                   Enquire about this car
                 </Link>
 
-                {detail ? (
-                  <Link
-                    to={detail}
-                    className="tap-target group mt-3 inline-flex items-center gap-1.5 self-center text-sm font-semibold text-gold-deep"
-                  >
-                    More about the {car.name}
-                    <span aria-hidden="true" className="transition group-hover:translate-x-1">
-                      →
-                    </span>
-                  </Link>
-                ) : null}
               </div>
             </article>
             </Reveal>

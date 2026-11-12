@@ -37,54 +37,6 @@
       "imageAlt": "Self-drive cars and bikes for rent in Nagercoil and Kanyakumari district"
     },
     {
-      "path": "/cars",
-      "title": "Self Drive Rental Cars in Nagercoil & Kanyakumari",
-      "description": "Hatchbacks, sedans and SUVs to rent without a driver in Nagercoil and across Kanyakumari district. Clear KM limits, extra-KM rates and refundable deposits.",
-      "priority": "0.9",
-      "imageSlot": "cars-hero",
-      "imageAlt": "Self-drive rental cars available in Nagercoil and across Kanyakumari district"
-    },
-    {
-      "path": "/bikes",
-      "title": "Self Drive Bike & Scooty Rental in Nagercoil & Kanyakumari",
-      "description": "Two-wheeler, scooty and motorcycle rental in Nagercoil, Kanyakumari, Marthandam and Colachel. Hourly, daily and weekly rates, delivered to you.",
-      "priority": "0.9",
-      "imageSlot": "bikes-hero",
-      "imageAlt": "Scooters and motorcycles for rent in Nagercoil and Kanyakumari"
-    },
-    {
-      "path": "/wedding-cars",
-      "title": "Wedding Car Rental in Nagercoil & Kanyakumari",
-      "description": "Decorated wedding cars and premium vehicles to rent for marriages across Kanyakumari district — Nagercoil, Marthandam and Colachel. Book season dates early.",
-      "priority": "0.9",
-      "imageSlot": "wedding-hero",
-      "imageAlt": "A decorated wedding car for rent in Kanyakumari district"
-    },
-    {
-      "path": "/tourist-vehicles",
-      "title": "Tourist Vehicle Rental with Driver — Kanyakumari",
-      "description": "Cars and vans with a driver for Kanyakumari sightseeing, temple tours and Trivandrum airport transfers. Per-day and per-trip rates for families and groups.",
-      "priority": "0.9",
-      "imageSlot": "tourist-hero",
-      "imageAlt": "A tourist vehicle with a driver for sightseeing around Kanyakumari"
-    },
-    {
-      "path": "/monthly",
-      "title": "Monthly Self Drive Car Rental in Nagercoil",
-      "description": "Monthly and long term self drive car rental across Kanyakumari district. Hatchbacks, sedans, SUVs and 7 seaters for NRIs, families and work postings.",
-      "priority": "0.9",
-      "imageSlot": "monthly-hero",
-      "imageAlt": "A car on monthly rental parked at a home in Nagercoil"
-    },
-    {
-      "path": "/nri",
-      "title": "Self Drive Car Rental for NRIs — Nagercoil & Kanyakumari",
-      "description": "Book a car or bike before you land. Airport pickup from Trivandrum, long-stay rates and WhatsApp booking for families visiting Kanyakumari from abroad.",
-      "priority": "0.9",
-      "imageSlot": "nri-hero",
-      "imageAlt": "A rental car ready for an NRI visitor arriving in Kanyakumari district"
-    },
-    {
       "path": "/tariff",
       "title": "Self Drive Car Rental Tariff — Nagercoil, Kanyakumari",
       "description": "Daily, weekly and monthly rates for self drive cars, bikes, wedding cars and tourist vehicles in Kanyakumari district. KM limits and deposits shown.",

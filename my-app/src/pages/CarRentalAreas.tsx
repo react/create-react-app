@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import seo from '../data/seo.json';
 import townData from '../data/towns.json';
-import serviceAreaData from '../data/service-areas.json';
 import { Reveal } from '../components/Reveal';
 import { PageHeader } from './PageHeader';
 
@@ -67,37 +66,6 @@ export function CarRentalAreas() {
           ))}
         </ul>
 
-        {/* Where a service has a page of its own for a town, this is the
-            shortest route to it -- and the only place on the site that lists
-            them together. */}
-        <Reveal delay={100}>
-          <h2 className="mt-16 text-2xl font-bold tracking-tight text-navy sm:text-3xl">
-            Written up town by town
-          </h2>
-          <p className="mt-3 text-ink-dim">
-            Some of what we rent works differently depending on where you are.
-            Where it does, it has a page of its own.
-          </p>
-          <ul className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {serviceAreaData.pages.map((page) => (
-              <li key={`${page.base}/${page.slug}`}>
-                <Link
-                  to={`${page.base}/${page.slug}`}
-                  className="card-lift group flex h-full flex-col rounded-[14px] border border-line bg-white p-5 transition hover:border-gold/60"
-                >
-                  <span className="font-bold text-navy">{page.service}</span>
-                  <span className="mt-1 text-sm text-ink-dim">in {page.town}</span>
-                  <span className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-gold-deep">
-                    Read it
-                    <span aria-hidden="true" className="transition group-hover:translate-x-1">
-                      →
-                    </span>
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </Reveal>
 
         <Reveal delay={120}>
           <p className="mt-12 text-ink-dim">

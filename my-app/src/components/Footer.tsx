@@ -29,7 +29,7 @@ const quickLinks = [
   { to: '/', label: 'Home' },
   // One heading for the lot. Everything we hire is on that page now.
   { to: '/services', label: 'Services' },
-  { to: '/cars', label: 'Our cars' },
+  // "Our cars" had a page of its own; the tariff is the list now.
   { to: '/tariff', label: 'Tariff' },
   { to: '/blog', label: 'Blog' },
 ];

@@ -86,11 +86,11 @@
           "label": "Our rates, KM limits and deposits"
         },
         {
-          "to": "/nri",
+          "to": "/services#nri",
           "label": "Renting on a visit home from abroad"
         },
         {
-          "to": "/cars",
+          "to": "/services#cars",
           "label": "The cars we rent out"
         }
       ]
@@ -176,7 +176,7 @@
           "label": "Places to visit, with distances"
         },
         {
-          "to": "/tourist-vehicles/kanyakumari",
+          "to": "/services#tourist-vehicles",
           "label": "Going with a driver instead"
         },
         {
@@ -256,11 +256,11 @@
       ],
       "related": [
         {
-          "to": "/cars",
+          "to": "/services#cars",
           "label": "Self drive cars"
         },
         {
-          "to": "/tourist-vehicles",
+          "to": "/services#tourist-vehicles",
           "label": "Vehicles with a driver"
         },
         {
@@ -343,7 +343,7 @@
           "label": "Our figures, all three of them"
         },
         {
-          "to": "/monthly",
+          "to": "/services#monthly",
           "label": "How the rate falls on a long rental"
         },
         {
@@ -422,7 +422,7 @@
       ],
       "related": [
         {
-          "to": "/cars/glanza-automatic",
+          "to": "/tariff",
           "label": "The automatic, if you would rather not use a clutch"
         },
         {

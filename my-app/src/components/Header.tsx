@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import seo from '../data/seo.json';
 import { Logo } from './Logo';
 
@@ -8,17 +8,7 @@ import { Logo } from './Logo';
    hire?" was being handed a list of six places to go and read instead of an
    answer. /services is the answer now, and the menu says so once.
 
-   The list stays for one job: telling the menu to light up while somebody is
-   on one of them. */
-const servicePaths = [
-  '/services',
-  '/cars',
-  '/bikes',
-  '/wedding-cars',
-  '/tourist-vehicles',
-  '/monthly',
-  '/nri',
-];
+   Those six pages are gone now; /services is the whole of it. */
 
 const links = [
   { to: '/', label: 'Home' },
@@ -34,7 +24,6 @@ const activeDot =
 
 export function Header() {
   const [open, setOpen] = useState(false);
-  const { pathname } = useLocation();
 
   // Closing on navigation belongs to the click that navigates, not to an
   // effect watching the path: an effect would set state during render and
@@ -42,11 +31,6 @@ export function Header() {
   const closeMenus = () => {
     setOpen(false);
   };
-
-  // Lit while somebody is on any of the pages behind it, not only on
-  // /services itself: a menu that goes dark when you follow it reads as a
-  // page that lost its place.
-  const onServicePage = servicePaths.includes(pathname);
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
     [
@@ -67,16 +51,7 @@ export function Header() {
             About Us
           </NavLink>
 
-          <NavLink
-            to="/services"
-            onClick={closeMenus}
-            className={() =>
-              [
-                'relative py-1 text-sm font-semibold transition',
-                onServicePage ? `text-gold-light ${activeDot}` : 'text-white/70 hover:text-gold-light',
-              ].join(' ')
-            }
-          >
+          <NavLink to="/services" onClick={closeMenus} className={linkClass}>
             Services
           </NavLink>
 

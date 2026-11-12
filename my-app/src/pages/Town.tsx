@@ -1,7 +1,6 @@
 import { Link, useParams } from 'react-router-dom';
 import seo from '../data/seo.json';
 import townData from '../data/towns.json';
-import serviceAreaData from '../data/service-areas.json';
 import modelData from '../data/models.json';
 import { readablePhone } from '../lib/phone';
 import { Reveal } from '../components/Reveal';
@@ -42,8 +41,6 @@ export function Town() {
   // Where a service has a page written for this particular town, the list
   // below points at that rather than at the general one -- which is the more
   // useful link for the reader and the one that gets those pages crawled.
-  const areas = serviceAreaData.pages.filter((page) => page.slug === town.slug);
-  const areaFor = (base: string) => areas.find((page) => page.base === base);
 
   return (
     <>
@@ -129,19 +126,17 @@ export function Town() {
                 <h2 className="text-lg font-bold text-navy">
                   Rental cars in {town.name}
                 </h2>
+                {/* Each of these had a page, and some had one written for
+                    this town. Both are gone; the section on /services is
+                    where that service is described now. */}
                 <ul className="mt-4 space-y-3">
                   {[
-                    { to: '/cars', label: 'Self drive cars', note: 'Hatchbacks, sedans and SUVs' },
-                    { to: '/bikes', label: 'Bikes and scooters', note: 'By the hour, day or week' },
-                    { to: '/wedding-cars', label: 'Wedding cars', note: 'Decorated, for the season' },
-                    { to: '/tourist-vehicles', label: 'Tourist vehicles', note: 'With a driver, for groups' },
-                    { to: '/monthly', label: 'Monthly rental', note: 'Cheaper the longer you keep it' },
-                  ].map((base) => {
-                    const local = areaFor(base.to);
-                    return local
-                      ? { ...base, to: `${local.base}/${local.slug}`, note: `Written for ${town.name}` }
-                      : base;
-                  }).map((item) => (
+                    { to: '/services#cars', label: 'Self drive cars', note: 'Hatchbacks, sedans and SUVs' },
+                    { to: '/services#bikes', label: 'Bikes and scooters', note: 'By the hour, day or week' },
+                    { to: '/services#wedding-cars', label: 'Wedding cars', note: 'Decorated, for the season' },
+                    { to: '/services#tourist-vehicles', label: 'Tourist vehicles', note: 'With a driver, for groups' },
+                    { to: '/services#monthly', label: 'Monthly rental', note: 'Cheaper the longer you keep it' },
+                  ].map((item) => (
                     <li key={item.to}>
                       <Link
                         to={item.to}
@@ -199,15 +194,12 @@ export function Town() {
             What we would bring
           </h2>
           <p className="mt-3 text-ink-dim">
+            {/* Named, not linked: each car had a page and they are gone.
+                The tariff below is where all of them are listed. */}
             {modelData.models.map((model, i) => (
               <span key={model.slug}>
                 {i > 0 ? (i === modelData.models.length - 1 ? ' and ' : ', ') : ''}
-                <Link
-                  to={`/cars/${model.slug}`}
-                  className="font-semibold text-navy hover:text-gold-deep"
-                >
-                  {model.name}
-                </Link>
+                <span className="font-semibold text-navy">{model.name}</span>
               </span>
             ))}
             . Rates for all of them are on the{' '}

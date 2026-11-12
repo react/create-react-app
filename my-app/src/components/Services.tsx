@@ -4,6 +4,7 @@ import { useHome } from '../content';
 import { Reveal } from './Reveal';
 import { SectionArt } from './art/SectionArt';
 import { hasScene } from './art/scenes';
+import { serviceHref } from '../lib/serviceAnchor';
 
 /**
  * What we hire, as a rail that moves on its own.
@@ -44,7 +45,9 @@ export function Services({ showHeading = true }: { showHeading?: boolean }) {
     >
       <Link
         data-rail-card=""
-        to={s.to}
+        // Its section on /services. The service pages these pointed at are
+        // gone; `to` is the section's id now, not a destination.
+        to={serviceHref(s.to)}
         // The second set is scenery: the same six links again would be six
         // more stops for a keyboard and six more announcements for a screen
         // reader, saying nothing new either time.

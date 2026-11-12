@@ -17,7 +17,7 @@ export function NotFound() {
             Back to home
           </Link>
           <Link
-            to="/cars"
+            to="/tariff"
             className="rounded-xl border border-line px-6 py-3 font-semibold text-ink-dim transition hover:border-navy/40 hover:text-navy"
           >
             See our cars

@@ -25,12 +25,6 @@ import { Home } from './pages/Home';
  * guessing at it.
  */
 const About = lazy(() => import('./pages/About').then(m => ({ default: m.About })));
-const Cars = lazy(() => import('./pages/Cars').then(m => ({ default: m.Cars })));
-const Bikes = lazy(() => import('./pages/Bikes').then(m => ({ default: m.Bikes })));
-const WeddingCars = lazy(() => import('./pages/WeddingCars').then(m => ({ default: m.WeddingCars })));
-const TouristVehicles = lazy(() => import('./pages/TouristVehicles').then(m => ({ default: m.TouristVehicles })));
-const Nri = lazy(() => import('./pages/Nri').then(m => ({ default: m.Nri })));
-const Monthly = lazy(() => import('./pages/Monthly').then(m => ({ default: m.Monthly })));
 const Tariff = lazy(() => import('./pages/Tariff').then(m => ({ default: m.Tariff })));
 const Blog = lazy(() => import('./pages/Blog').then(m => ({ default: m.Blog })));
 const Contact = lazy(() => import('./pages/Contact').then(m => ({ default: m.Contact })));
@@ -39,8 +33,6 @@ const Services = lazy(() => import('./pages/Services').then(m => ({ default: m.S
 const NotFound = lazy(() => import('./pages/NotFound').then(m => ({ default: m.NotFound })));
 const CarRentalAreas = lazy(() => import('./pages/CarRentalAreas').then(m => ({ default: m.CarRentalAreas })));
 const Town = lazy(() => import('./pages/Town').then(m => ({ default: m.Town })));
-const CarModel = lazy(() => import('./pages/CarModel').then(m => ({ default: m.CarModel })));
-const ServiceArea = lazy(() => import('./pages/ServiceArea').then(m => ({ default: m.ServiceArea })));
 const Post = lazy(() => import('./pages/Post').then(m => ({ default: m.Post })));
 
 /**
@@ -92,26 +84,10 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
-          <Route path="/cars" element={<Cars />} />
-          {/* One page per vehicle people ask for by name, under the listing
-              they all appear on. Matched inside CarModel, which renders the
-              404 page for a slug nobody has written -- a route that matched
-              anything would turn every typo into a thin page with a name on
-              it. */}
-          <Route path="/cars/:slug" element={<CarModel />} />
-          <Route path="/bikes" element={<Bikes />} />
-          {/* One service in one town, where that pair has something of its
-              own to say. Matched on the whole path inside ServiceArea, which
-              renders the 404 page for a combination nobody has written --
-              there is no matrix here on purpose. */}
-          <Route path="/bikes/:slug" element={<ServiceArea />} />
-          <Route path="/wedding-cars" element={<WeddingCars />} />
-          <Route path="/wedding-cars/:slug" element={<ServiceArea />} />
-          <Route path="/tourist-vehicles" element={<TouristVehicles />} />
-          <Route path="/tourist-vehicles/:slug" element={<ServiceArea />} />
-          <Route path="/monthly" element={<Monthly />} />
-          <Route path="/monthly/:slug" element={<ServiceArea />} />
-          <Route path="/nri" element={<Nri />} />
+          {/* The six service pages, the page per car model and the
+              service-in-a-town pages are gone. What they said is on
+              /services, which carries every service in full, and /tariff,
+              which carries every car and what it costs. */}
           <Route path="/tariff" element={<Tariff />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<Post />} />
