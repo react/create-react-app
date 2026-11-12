@@ -123,32 +123,50 @@ for (const icon of [
   template = template.replaceAll(`/${icon}"`, `/${icon}?v=${stamp}"`);
 }
 /**
- * The stylesheet, moved to the front of the head.
+ * The stylesheet, written into the front of the head rather than linked.
  *
- * Vite appends it, so it was arriving after six favicon links, a theme
+ * Vite appends the link, so it was arriving after six favicon links, a theme
  * colour, the viewport, a title, a description, a canonical, nine og: and
  * twitter: tags, a block of JSON-LD, three font preloads, an inline script,
  * the module script and a modulepreload. It is the one request that blocks
  * the first paint, and it was the last thing in the head the browser had a
- * reason to ask for.
+ * reason to ask for. Hoisting the link to the top fixed that part.
  *
- * Measured on a throttled phone -- 4x CPU, 150ms, 1.6 Mbps -- over HTTP/2,
- * seven runs a side, median: first contentful paint on /cars went 1908ms to
- * 1000ms. Inlining the whole stylesheet into every page scored the same
- * 980ms, which is how we know the bytes were never the problem and the
- * queue was; this costs nothing and keeps the file cacheable.
+ * Hoisting is no longer enough. Measured again on a throttled phone -- 4x
+ * CPU, 150ms RTT, 1.6 Mbps -- over HTTP/2, seven runs a side, median, with
+ * the link already hoisted:
  *
- * The home page does not move (1496ms either way): its first paint waits on
- * laying out 1433 nodes rather than on the stylesheet. Every other page in
- * the site is the /cars case.
+ *            first paint          largest paint
+ *   /tariff   892ms -> 492ms      960ms -> 696ms
+ *   /cars     932ms -> 500ms      976ms -> 712ms
+ *   /         1040ms -> 672ms    1592ms -> 1608ms
+ *
+ * An earlier note here recorded inlining as worth nothing over hoisting. It
+ * was measured when the stylesheet was smaller and the pages lighter; at
+ * 13KB gzipped against pages that now pull 550KB, the round trip costs about
+ * 400ms and the bytes cost about 65ms. Re-measure before trusting this one
+ * too.
+ *
+ * The home page's largest paint does not move: it waits on the hero
+ * photograph, which is bandwidth-bound behind the entry chunk, not on the
+ * stylesheet. Its first paint moves like everywhere else.
+ *
+ * What this gives up is a stylesheet cached across pages. Less than it
+ * sounds: the site is a single-page app, so moving between pages inside a
+ * visit fetches no HTML at all, and a visitor arriving from a search result
+ * reads one page. The link stays in no page, so the file is downloaded once
+ * per cold page view instead of once per visitor.
  *
  * charset and viewport stay in front of it. The first has to be inside the
- * opening bytes, and the second decides how wide the page is -- a stylesheet
- * applied before the viewport is known is a layout done twice.
+ * opening bytes, and the second decides how wide the page is -- styles
+ * applied before the viewport is known are a layout done twice.
  */
-function cssFirst(html) {
-  const link = html.match(/<link rel="stylesheet"[^>]*>/);
-  if (!link) return html;   // no stylesheet in this build; nothing to hoist
+function cssInline(html) {
+  const link = html.match(/<link rel="stylesheet"[^>]*href="([^"]+)"[^>]*>/);
+  if (!link) return html;   // no stylesheet in this build; nothing to do
+
+  // The href is site-absolute (/assets/index-HASH.css); read it from dist.
+  const css = readFileSync(join(dist, link[1].replace(/^\//, '')), 'utf8');
 
   const without = html.replace(link[0], '');
   const head = without.match(/<meta charset="[^"]*"\s*\/?>/);
@@ -158,12 +176,16 @@ function cssFirst(html) {
   const viewport = without.match(/\s*<meta name="viewport"[^>]*>/);
   const body = viewport ? without.replace(viewport[0], '') : without;
   const at = body.indexOf(head[0]) + head[0].length;
-  const put = (viewport ? '\n    ' + viewport[0].trim() : '') + '\n    ' + link[0];
+  // </style> inside the stylesheet would close the tag early. It cannot
+  // appear in valid CSS, but a string or a comment could carry one.
+  const safe = css.replace(/<\/style/gi, '<\\/style');
+  const put = (viewport ? '\n    ' + viewport[0].trim() : '') +
+              '\n    <style>' + safe + '</style>';
 
   return body.slice(0, at) + put + body.slice(at);
 }
 
-template = cssFirst(template);
+template = cssInline(template);
 
 // Which photographs actually exist, for the sitemap and the structured data.
 const photos = JSON.parse(readFileSync(join(root, 'src/data/photos.json'), 'utf8'));
