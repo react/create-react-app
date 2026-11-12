@@ -434,6 +434,293 @@ switch ($action) {
         json_out(['booking' => present_booking($row ?? [], true)]);
     }
 
+    // ----------------------------------------------------------- available --
+    /*
+     * Which cars could actually go out between two times.
+     *
+     * The ordinary booking form lists the whole fleet and finds the clash on
+     * save. That is fine at a desk with the customer on the telephone; it is
+     * not fine at the car, where the answer to "can I take that one" has to
+     * come before the driver starts filling anything in.
+     *
+     * A car is offered when it is not in for work or retired, is not out on
+     * another hire that overlaps, and is not a temporary one somebody else
+     * owns. The same three rules the save path enforces, asked in advance.
+     */
+    case 'available': {
+        api_guard('booking.view');
+
+        $startAt  = normalise_datetime((string) ($_GET['start_at'] ?? ''));
+        $returnAt = normalise_datetime((string) ($_GET['return_at'] ?? ''));
+        if ($startAt === null || $returnAt === null || strtotime($returnAt) <= strtotime($startAt)) {
+            json_error('Give a start and a return, with the return after the start.', 422);
+        }
+
+        $notTemporary = table_has_column('vehicles', 'is_temporary') ? 'AND v.is_temporary = 0' : '';
+        $rows = fetch_all(
+            "SELECT v.id, v.name, v.brand, v.reg_number, v.body_type, v.seats,
+                    v.transmission, v.fuel, v.status,
+                    r.rate_daily, r.km_limit_per_day, r.extra_km_rate, r.security_deposit
+               FROM vehicles v
+               LEFT JOIN vehicle_rates r
+                 ON r.id = (SELECT id FROM vehicle_rates
+                             WHERE vehicle_id = v.id AND effective_from <= CURDATE()
+                          ORDER BY effective_from DESC, id DESC LIMIT 1)
+              WHERE v.status NOT IN ('Maintenance', 'Inactive')
+                    $notTemporary
+           ORDER BY v.brand, v.name"
+        );
+
+        $free = [];
+        foreach ($rows as $row) {
+            $clash = vehicle_double_booked((int) $row['id'], $startAt, $returnAt, null);
+            if ($clash !== null) {
+                continue;
+            }
+            $free[] = [
+                'id'           => (int) $row['id'],
+                'name'         => $row['name'],
+                'brand'        => $row['brand'],
+                'reg_number'   => $row['reg_number'],
+                'body_type'    => $row['body_type'],
+                'seats'        => (int) $row['seats'],
+                'transmission' => $row['transmission'],
+                'fuel'         => $row['fuel'],
+                'rate_daily'   => $row['rate_daily'],
+                'km_limit_per_day' => $row['km_limit_per_day'],
+                'extra_km_rate'    => $row['extra_km_rate'],
+                'security_deposit' => $row['security_deposit'],
+            ];
+        }
+
+        json_out(['vehicles' => $free]);
+    }
+
+    // --------------------------------------------------------- quick start --
+    /*
+     * A walk-in, taken at the car by the driver handing it over.
+     *
+     * Somebody arrives without a booking. The driver has a phone and a car,
+     * and the alternative is a note on paper that reaches the office that
+     * evening -- by which time the odometer reading is a memory and the
+     * customer has gone.
+     *
+     * Everything happens in one transaction: the customer, the booking, what
+     * was agreed, the money taken at the car, the opening odometer, and both
+     * status changes. Either the car is out on a recorded hire or nothing
+     * happened. A booking that exists with no pickup reading is the state
+     * this is written to make impossible, because it is the one that cannot
+     * be settled honestly when the car comes back.
+     *
+     * The availability check runs INSIDE the transaction, not before it. Two
+     * drivers can be standing at the same car; checking first and inserting
+     * afterwards leaves a gap between the two in which both pass.
+     */
+    case 'quick_start': {
+        $user  = api_guard('booking.create', true);
+        $input = json_input();
+
+        $data = (new Validator($input))
+            ->required('customer_name', 'Customer name')
+            ->phone('phone', 'phone number')
+            ->required('licence_number', 'Driving licence number')
+            ->optional('address', 255)
+            ->optional('pickup_location', 190)
+            ->optional('notes', 2000)
+            ->integer('vehicle_id', 'Vehicle', 1)
+            ->required('start_at', 'Pickup date and time')
+            ->required('return_at', 'Expected return date and time')
+            ->integer('odometer_km', 'Starting KM', 0, 9999999)
+            ->inList('fuel_level', 'Fuel level', FUEL_LEVELS, false)
+            ->money('base_rental', 'Rental amount')
+            ->money('deposit_required', 'Security deposit', false)
+            ->money('advance', 'Advance paid', false)
+            ->orFail();
+
+        $startAt  = normalise_datetime($data['start_at']);
+        $returnAt = normalise_datetime($data['return_at']);
+        if ($startAt === null || $returnAt === null) {
+            json_error('Please correct the highlighted fields.', 422,
+                ['fields' => ['start_at' => 'Dates and times must be valid.']]);
+        }
+        if (strtotime($returnAt) <= strtotime($startAt)) {
+            json_error('Please correct the highlighted fields.', 422,
+                ['fields' => ['return_at' => 'The return must be after the start.']]);
+        }
+
+        $method = (string) ($input['method'] ?? 'Cash');
+        if (!in_array($method, PAYMENT_METHODS, true)) {
+            $method = 'Cash';
+        }
+
+        // Starting a walk-in needs booking.create; recording the cash taken
+        // for it needs the money abilities as well. Staff have the first and
+        // not the second, so without this check this one endpoint would let
+        // them write a payment they cannot write anywhere else -- the whole
+        // point of a per-ability guard defeated by the convenience of doing
+        // six things at once.
+        //
+        // Only checked when there is money, so a walk-in taken with nothing
+        // paid at the car still works for them.
+        $advance = (float) ($data['advance'] ?? 0);
+        $deposit = (float) ($data['deposit_required'] ?? 0);
+        $tookDeposit = !empty($input['deposit_taken']) && $deposit > 0;
+
+        // user_allows, not role_can: it reads role_slug and honours the
+        // per-user exceptions the Users screen sets, which is how one trusted
+        // driver gets to take cash without the role changing for all of them.
+        if ($advance > 0 && !user_allows($user, 'payment.create')) {
+            json_error('You can start this rental, but not record the money taken for it. '
+                . 'Leave the advance blank, or ask the office to enter it.', 403);
+        }
+        if ($tookDeposit && !user_allows($user, 'deposit.create')) {
+            json_error('You can start this rental, but not record the deposit taken for it. '
+                . 'Leave the deposit unticked, or ask the office to enter it.', 403);
+        }
+
+        $days = rental_days($startAt, $returnAt);
+
+        $out = transaction(function () use ($data, $input, $startAt, $returnAt, $days, $method, $user) {
+            $vehicleId = (int) $data['vehicle_id'];
+
+            // Locked for the length of the transaction, so a second driver
+            // asking for the same car waits here rather than reading a row
+            // that is about to change under them.
+            $vehicle = fetch_one('SELECT * FROM vehicles WHERE id = ? FOR UPDATE', [$vehicleId]);
+            if ($vehicle === null) {
+                json_error('That vehicle no longer exists.', 404);
+            }
+            if (in_array($vehicle['status'], ['Maintenance', 'Inactive'], true)) {
+                json_error("{$vehicle['name']} is marked {$vehicle['status']} and cannot go out.", 409);
+            }
+
+            $clash = vehicle_double_booked($vehicleId, $startAt, $returnAt, null);
+            if ($clash !== null) {
+                json_error(
+                    "{$vehicle['name']} is already booked for those dates ({$clash['booking_number']}: "
+                    . date('d M, H:i', strtotime((string) $clash['start_at'])) . ' \u2192 '
+                    . date('d M, H:i', strtotime((string) $clash['return_at'])) . ').',
+                    409
+                );
+            }
+
+            $customerId = find_or_create_customer([
+                'name'           => $data['customer_name'],
+                'phone'          => $data['phone'],
+                'address'        => $data['address'],
+                'licence_number' => $data['licence_number'],
+                'whatsapp'       => $input['whatsapp'] ?? '',
+                'licence_expiry' => '',
+                'id_number'      => $input['id_number'] ?? '',
+                'customer_type'  => 'New',
+            ], (int) $user['id']);
+
+            // Columns added by 020. Guarded the same way the rest of this
+            // endpoint guards its later columns, so a panel one migration
+            // behind still takes the walk-in rather than refusing it.
+            $walkInReady = table_has_column('bookings', 'source');
+            $driverReady = table_has_column('bookings', 'driver_id');
+            $startedReady = table_has_column('bookings', 'started_at');
+
+            $number = next_number('NSC');
+            query(
+                'INSERT INTO bookings
+                   (booking_number, customer_id, vehicle_id, vehicle_reg_number,
+                    start_at, return_at, duration_days, pickup_location,
+                    return_location, status, notes, created_by'
+                  . ($walkInReady ? ', source' : '')
+                  . ($driverReady ? ', driver_id' : '')
+                  . ($startedReady ? ', started_at' : '') . ')
+                 VALUES (?,?,?,?,?,?,?,?,?,?,?,?'
+                  . ($walkInReady ? ',?' : '') . ($driverReady ? ',?' : '')
+                  . ($startedReady ? ',?' : '') . ')',
+                array_merge(
+                    [$number, $customerId, $vehicleId, $vehicle['reg_number'],
+                     $startAt, $returnAt, $days,
+                     (string) ($data['pickup_location'] ?? ''), '',
+                     'Active', (string) ($data['notes'] ?? ''), $user['id']],
+                    $walkInReady ? ['Walk-in'] : [],
+                    $driverReady ? [(int) $user['id']] : [],
+                    $startedReady ? [date('Y-m-d H:i:s')] : []
+                )
+            );
+            $bookingId = last_insert_id();
+
+            // What was agreed, so the return can be settled against it.
+            $rateDaily = $days > 0 ? round(((float) $data['base_rental']) / $days, 2) : (float) $data['base_rental'];
+            $kmLimit   = (int) ($input['km_limit_per_day'] ?? $vehicle['km_limit_per_day'] ?? 0);
+            $extraRate = (float) ($input['extra_km_rate'] ?? 0);
+            $deposit   = (float) ($data['deposit_required'] ?? 0);
+            $commissionReady = table_has_column('booking_charges', 'commission');
+
+            query(
+                'INSERT INTO booking_charges
+                   (booking_id, supersedes_id, rate_daily, km_limit_per_day, extra_km_rate,
+                    deposit_required, base_rental, other_charges, discount, total, reason, created_by'
+                  . ($commissionReady ? ', commission' : '') . ')
+                 VALUES (?,?,?,?,?,?,?,?,?,?,?,?' . ($commissionReady ? ',?' : '') . ')',
+                array_merge(
+                    [$bookingId, null, $rateDaily, $kmLimit, $extraRate, $deposit,
+                     (float) $data['base_rental'], 0, 0, (float) $data['base_rental'],
+                     'Walk-in started at the car', $user['id']],
+                    $commissionReady ? [0] : []
+                )
+            );
+
+            // The cash actually handed over. Nothing is written when nothing
+            // was taken: a zero payment is a row that says something happened.
+            $advance = (float) ($data['advance'] ?? 0);
+            if ($advance > 0) {
+                query(
+                    'INSERT INTO payments
+                       (payment_number, booking_id, kind, amount, paid_on, method,
+                        reference, notes, created_by)
+                     VALUES (?,?,?,?,?,?,?,?,?)',
+                    [next_number('PMT'), $bookingId, 'advance', $advance, date('Y-m-d'),
+                     $method, (string) ($input['reference'] ?? ''), 'Taken at the car', $user['id']]
+                );
+            }
+            if ($deposit > 0 && !empty($input['deposit_taken'])) {
+                query(
+                    'INSERT INTO deposits (booking_id, amount, received_on, method, reference, notes, created_by)
+                     VALUES (?,?,?,?,?,?,?)',
+                    [$bookingId, $deposit, date('Y-m-d'), $method,
+                     (string) ($input['reference'] ?? ''), 'Taken at the car', $user['id']]
+                );
+            }
+
+            // The opening odometer, by the same route the ordinary pickup
+            // takes, so the return has something to measure against.
+            $checklistReady = checklist_ready();
+            $checklist      = checklist_json($input['checklist'] ?? null);
+            query(
+                'INSERT INTO km_records
+                   (booking_id, leg, odometer_km, recorded_at, fuel_level,
+                    condition_note, notes, created_by'
+                  . ($checklistReady ? ', checklist' : '') . ')
+                 VALUES (?, \'pickup\', ?,?,?,?,?,?' . ($checklistReady ? ',?' : '') . ')',
+                array_merge(
+                    [$bookingId, (int) $data['odometer_km'], $startAt, $data['fuel_level'],
+                     (string) ($input['condition_note'] ?? ''), 'Walk-in handover', $user['id']],
+                    $checklistReady ? [$checklist] : []
+                )
+            );
+
+            query("UPDATE vehicles SET status = 'On Rental' WHERE id = ?", [$vehicleId]);
+
+            audit_log('walk_in_started', 'bookings', 'booking', $bookingId, null,
+                ['booking_number' => $number, 'vehicle' => $vehicle['name'],
+                 'odometer_km' => (int) $data['odometer_km'], 'advance' => $advance,
+                 'driver' => $user['name']],
+                null, (int) $user['id'], $user['name'], $bookingId, $customerId, $vehicleId);
+
+            return ['id' => $bookingId, 'booking_number' => $number,
+                    'vehicle' => $vehicle['name'], 'reg' => $vehicle['reg_number']];
+        });
+
+        json_out(['ok' => true] + $out);
+    }
+
     // -------------------------------------------------------------- cancel --
     case 'cancel': {
         $user  = api_guard('booking.cancel', true);
@@ -649,6 +936,11 @@ function present_booking(array $row, bool $detailed): array
         'balance'         => (float) $money['balance'],
         'payment_status'  => payment_status($money),
         'deposit_held'    => (float) $money['deposit_held'],
+        // Where the booking came from. Null until migration 020 has run, so
+        // a panel one migration behind simply does not show the badge rather
+        // than showing every booking as an office one.
+        'source'          => $row['source'] ?? null,
+        'started_at'      => $row['started_at'] ?? null,
     ];
 
     // KM travels with the summary as well as the detail: the reports work
@@ -666,7 +958,16 @@ function present_booking(array $row, bool $detailed): array
         return $out;
     }
 
+    // Who handed the car over, by name rather than by id. Only on the detail:
+    // the list would run this once per row.
+    $driverName = null;
+    if (!empty($row['driver_id'])) {
+        $who = fetch_one('SELECT name FROM users WHERE id = ?', [(int) $row['driver_id']]);
+        $driverName = $who['name'] ?? null;
+    }
+
     return $out + [
+        'driver_name'      => $driverName,
         'customer_id'      => (int) $row['customer_id'],
         'customer_address' => $row['customer_address'] ?? null,
         'licence_number'   => $row['licence_number'] ?? null,

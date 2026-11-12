@@ -136,6 +136,15 @@ const api = {
       }),
     complete: (id) =>
       apiRequest('api/bookings.php?action=complete', { method: 'POST', body: { id } }),
+    // Which cars could go out between two times -- asked before the driver
+    // fills anything in, rather than found on save.
+    available: (startAt, returnAt) =>
+      apiRequest('api/bookings.php?action=available'
+        + `&start_at=${encodeURIComponent(startAt)}&return_at=${encodeURIComponent(returnAt)}`),
+    // A walk-in: customer, booking, charges, money and opening odometer in
+    // one transaction, ending with the car on rental.
+    quickStart: (payload) =>
+      apiRequest('api/bookings.php?action=quick_start', { method: 'POST', body: payload }),
     // Cancelled bookings only, and only once no money is attached. The
     // endpoint enforces both; this is here so the panel can offer it.
     remove: (id) =>

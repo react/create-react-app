@@ -2326,3 +2326,152 @@ label.finance-toggle {
 /* A slot that keeps the whole image gives it a little room, so a logo with
    no margin of its own is not flush against the edge of the thumbnail. */
 .brand-slot-preview.is-whole img { padding: 8px; }
+
+/* ===========================================================================
+   The driver's screen, and Quick Start Rental
+   ===========================================================================
+
+   Sized for one hand on a phone in daylight, standing next to a car with a
+   customer waiting. Every target here is at least 48px high because the
+   alternative is a mis-tap that puts the wrong car on rental, and the type
+   does not go below 0.95rem because the screen is being read at arm's length
+   with the sun on it. */
+
+.driver-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.driver-card {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
+  min-height: 104px; padding: 16px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+  cursor: pointer; text-align: left;
+  transition: border-color 0.15s ease, transform 0.1s ease;
+}
+.driver-card:active { transform: scale(0.98); }
+.driver-card.is-on { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(10,14,32,0.12); }
+
+.driver-card-n {
+  font-size: 1.9rem; font-weight: 700; line-height: 1.1; color: var(--primary);
+  /* Tabular figures so 7 and 11 sit in the same place: the four counts are
+     read as a row, and proportional digits make them jitter. */
+  font-variant-numeric: tabular-nums;
+}
+.driver-card-t { font-size: 0.95rem; font-weight: 600; }
+.driver-card-s { font-size: 0.78rem; color: var(--ink-faint); }
+
+/* The one card that does something rather than filtering a list, so it is
+   filled instead of outlined. It keeps the others' size and stays in the
+   grid: four buttons make an even two-by-two on a phone, and a full-width
+   banner here would leave one of the three counts sitting beside a hole.
+   Its content centres because it has no number to sit under. */
+.driver-card-go {
+  justify-content: center;
+  background: var(--primary); border-color: var(--primary); color: #fff;
+}
+.driver-card-go .driver-card-t { font-size: 1.05rem; font-weight: 700; }
+.driver-card-go .driver-card-s { color: rgba(255,255,255,0.72); }
+
+.driver-row {
+  display: flex; flex-direction: column; gap: 3px;
+  width: 100%; min-height: 48px; padding: 14px 16px; margin-bottom: 10px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; cursor: pointer; text-align: left;
+}
+.driver-row:active { background: var(--bg); }
+.driver-row-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.driver-row-id { font-weight: 700; font-size: 0.9rem; }
+.driver-row-who { font-size: 1rem; font-weight: 600; }
+.driver-row-car { font-size: 0.9rem; color: var(--ink-dim); }
+.driver-row-when { font-size: 0.82rem; color: var(--ink-faint); }
+
+/* ---- the wizard ---- */
+
+.qs-modal { max-width: 560px; padding: 0; }
+.qs-head { padding: 22px 24px 0; }
+.qs-head h3 { margin-bottom: 4px; }
+.qs-step { font-size: 0.82rem; color: var(--ink-faint); margin-bottom: 12px; }
+
+.qs-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.qs-bar > span {
+  display: block; height: 100%; width: 14.28%;
+  background: var(--accent); border-radius: 2px;
+  transition: width 0.25s ease;
+}
+
+#qsForm { padding: 20px 24px 24px; }
+.qs-lead { font-size: 1rem; font-weight: 600; margin-bottom: 16px; }
+.qs-note { font-size: 0.82rem; color: var(--ink-faint); margin-top: 12px; }
+
+/* Inputs a thumb can hit, and 16px type: iOS zooms the whole page in on any
+   focused input under 16px, which on a wizard throws the question off screen
+   at exactly the moment it is being answered. */
+.qs-pane input, .qs-pane select, .qs-pane textarea { min-height: 48px; font-size: 16px; }
+.qs-pane textarea { min-height: 76px; }
+.qs-pane input[type="file"] { padding: 12px; }
+.qs-pane input[type="checkbox"] { min-height: 0; width: 22px; height: 22px; }
+
+.qs-vehicles { display: grid; gap: 10px; }
+.qs-vehicle {
+  display: flex; flex-direction: column; gap: 2px;
+  min-height: 48px; padding: 14px 16px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; cursor: pointer; text-align: left;
+}
+.qs-vehicle.is-on { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(10,14,32,0.12); background: #FCFBF8; }
+.qs-vehicle-name { font-size: 1rem; font-weight: 700; }
+/* The number plate, not the model, is what tells two identical cars apart on
+   a forecourt -- so it is the second thing read, not buried in the meta line. */
+.qs-vehicle-reg { font-size: 0.88rem; font-weight: 600; color: var(--accent-deep); letter-spacing: 0.04em; }
+.qs-vehicle-meta { font-size: 0.82rem; color: var(--ink-dim); }
+.qs-vehicle-rate { font-size: 0.85rem; font-weight: 600; }
+
+.qs-duration, .qs-balance, .qs-photo-count {
+  font-size: 0.88rem; font-weight: 600; color: var(--accent-deep); min-height: 1.4em;
+}
+
+/* The word "required" beside a label. Small and uppercase so it reads as a
+   mark on the field rather than as part of the field's name. */
+.qs-req {
+  margin-left: 6px; font-size: 0.68rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.06em; color: var(--danger);
+}
+
+.qs-summary {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 12px; padding: 6px 14px;
+}
+.qs-line {
+  display: flex; justify-content: space-between; gap: 12px;
+  padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 0.92rem;
+}
+.qs-line:last-child { border-bottom: 0; }
+/* Something that is missing rather than wrong: worth catching on the way past,
+   not worth a red box. */
+.qs-line-gap > span:last-child { color: var(--danger); }
+.qs-line > span:first-child { color: var(--ink-dim); }
+.qs-line > span:last-child { font-weight: 700; text-align: right; }
+
+.qs-error {
+  margin: 14px 0 0; padding: 11px 14px;
+  background: #FBECEA; color: var(--danger);
+  border-radius: 10px; font-size: 0.88rem; font-weight: 600;
+}
+
+.qs-actions {
+  display: flex; gap: 10px; margin-top: 20px;
+  padding-top: 16px; border-top: 1px solid var(--border);
+}
+/* Next and Start Rental take the room that is left, so the thumb finds the
+   forward action without aiming; Cancel and Back stay small on purpose. */
+.qs-next { flex: 1; min-height: 52px; font-size: 1rem; }
+
+/* Four across once there is room: the office opens this screen on a laptop
+   to see the same day's work the driver sees. */
+@media (min-width: 620px) {
+  .driver-grid { grid-template-columns: repeat(4, 1fr); }
+}

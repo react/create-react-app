@@ -175,8 +175,17 @@ function role_can(string $role, string $ability): bool
         // booking.complete is what the pickup and return both guard on, so a
         // driver who cannot have it cannot do the job. booking.create is here
         // for the walk-in they take without an office booking first.
+        //
+        // payment.create and deposit.create came later, and only because the
+        // walk-in flow forced the question: a driver handing over a car to
+        // somebody who walked up takes the advance and the deposit in cash at
+        // the car. Without these the money is collected and not recorded,
+        // which is worse than a driver being able to record it. They can
+        // enter one; correcting or cancelling one stays with the office, so a
+        // mistake is visible rather than quietly rewritten.
         'driver'      => ['booking.view', 'booking.create', 'booking.complete',
-                          'vehicle.view', 'km.create'],
+                          'vehicle.view', 'km.create',
+                          'payment.create', 'deposit.create'],
     ];
 
     foreach ($abilities[$role] ?? [] as $granted) {

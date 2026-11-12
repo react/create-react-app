@@ -176,6 +176,41 @@ admin_shell_open($me, 'dashboard', 'Dashboard', true, $migrationError);
         </div><!-- /dash-body -->
       </section>
 
+      <!-- Driver tab: the whole job on a phone, four buttons wide -->
+      <section class="admin-panel" id="panel-driver" hidden>
+        <div class="panel-header">
+          <div>
+            <h2>Today</h2>
+            <p>Hand a car over, take one back, or start a walk-in.</p>
+          </div>
+        </div>
+
+        <div class="driver-grid">
+          <button type="button" class="driver-card" data-driver="Confirmed">
+            <span class="driver-card-n" id="drvUpcomingN">0</span>
+            <span class="driver-card-t">Upcoming</span>
+            <span class="driver-card-s">Booked, waiting to go out</span>
+          </button>
+          <button type="button" class="driver-card" data-driver="Active">
+            <span class="driver-card-n" id="drvActiveN">0</span>
+            <span class="driver-card-t">On rental</span>
+            <span class="driver-card-s">Out now, due back</span>
+          </button>
+          <button type="button" class="driver-card" data-driver="Returned">
+            <span class="driver-card-n" id="drvReturnN">0</span>
+            <span class="driver-card-t">Return a vehicle</span>
+            <span class="driver-card-s">Back, waiting to be checked in</span>
+          </button>
+          <button type="button" class="driver-card driver-card-go" id="drvQuickStart">
+            <span class="driver-card-t">Quick Start Rental</span>
+            <span class="driver-card-s">Somebody is here without a booking</span>
+          </button>
+        </div>
+
+        <h3 class="dashboard-subheading" id="drvListTitle">Upcoming</h3>
+        <div id="drvList"></div>
+      </section>
+
       <!-- Bookings tab -->
       <section class="admin-panel" id="panel-bookings" hidden>
         <div id="bookingListView">
@@ -348,6 +383,155 @@ admin_shell_open($me, 'dashboard', 'Dashboard', true, $migrationError);
        what is about to be removed, and everything else that used to be
        crammed into a browser confirm(), is built there instead of marked up
        on this page. -->
+  <!-- ===== Quick Start: a walk-in, taken at the car ===== -->
+  <div class="modal-overlay" id="qsOverlay" hidden>
+    <div class="modal modal-wide qs-modal">
+      <div class="qs-head">
+        <h3 id="qsTitle">Quick Start Rental</h3>
+        <p class="qs-step" id="qsStepOf">Step 1 of 7</p>
+        <div class="qs-bar"><span id="qsBarFill"></span></div>
+      </div>
+
+      <form id="qsForm" novalidate>
+        <!-- 1. when -->
+        <section class="qs-pane" data-step="1">
+          <p class="qs-lead">When is the car going out, and when is it due back?</p>
+          <div class="modal-row">
+            <div class="field-group"><label for="qsStartDate">Pickup date</label>
+              <input type="date" id="qsStartDate" required /></div>
+            <div class="field-group"><label for="qsStartTime">Pickup time</label>
+              <input type="time" id="qsStartTime" required /></div>
+          </div>
+          <div class="modal-row">
+            <div class="field-group"><label for="qsReturnDate">Expected return date</label>
+              <input type="date" id="qsReturnDate" required /></div>
+            <div class="field-group"><label for="qsReturnTime">Expected return time</label>
+              <input type="time" id="qsReturnTime" required /></div>
+          </div>
+          <p class="qs-duration" id="qsDuration"></p>
+        </section>
+
+        <!-- 2. which car -->
+        <section class="qs-pane" data-step="2" hidden>
+          <p class="qs-lead">Which car is going out?</p>
+          <div class="field-group">
+            <label for="qsBodyType">Type of car</label>
+            <select id="qsBodyType"><option value="">Any</option><?= options_for(BODY_TYPES) ?></select>
+          </div>
+          <p class="qs-note">Only cars free for those dates are listed.</p>
+          <div id="qsVehicles" class="qs-vehicles"></div>
+          <input type="hidden" id="qsVehicleId" />
+        </section>
+
+        <!-- 3. who -->
+        <section class="qs-pane" data-step="3" hidden>
+          <p class="qs-lead">Who is taking it?</p>
+          <div class="modal-row">
+            <div class="field-group"><label for="qsName">Full name</label>
+              <input type="text" id="qsName" required data-rule="name" /></div>
+            <div class="field-group"><label for="qsPhone">Mobile number</label>
+              <div class="phone-field"><?= dial_select('qsPhoneCode') ?>
+              <input type="tel" id="qsPhone" required inputmode="numeric" data-rule="digits" /></div>
+              <p class="field-hint" id="qsPhoneHint"></p></div>
+          </div>
+          <div class="modal-row">
+            <div class="field-group"><label for="qsAlt">Alternate number</label>
+              <div class="phone-field"><?= dial_select('qsAltCode') ?>
+              <input type="tel" id="qsAlt" inputmode="numeric" data-rule="digits" /></div>
+              <p class="field-hint" id="qsAltHint"></p></div>
+            <div class="field-group"><label for="qsLicence">Driving licence number</label>
+              <input type="text" id="qsLicence" required data-rule="upper" /></div>
+          </div>
+          <div class="field-group"><label for="qsAddress">Address</label>
+            <textarea id="qsAddress" rows="2" placeholder="Door and street&#10;Town"></textarea></div>
+          <div class="field-group">
+            <label for="qsIdPhoto">Photograph of the licence or ID</label>
+            <input type="file" id="qsIdPhoto" accept="image/*" capture="environment" />
+            <p class="field-hint">Taken now, so there is a record of what was shown.</p>
+          </div>
+        </section>
+
+        <!-- 4. the car as it leaves -->
+        <section class="qs-pane" data-step="4" hidden>
+          <p class="qs-lead">The car as it leaves.</p>
+          <div class="modal-row">
+            <div class="field-group"><label for="qsPickupLocation">Pickup location</label>
+              <input type="text" id="qsPickupLocation" placeholder="e.g. Nagercoil Junction" /></div>
+            <div class="field-group"><label for="qsOdometer">Starting odometer (KM)</label>
+              <input type="number" id="qsOdometer" required min="0" inputmode="numeric" /></div>
+          </div>
+          <div class="modal-row modal-row-3">
+            <div class="field-group"><label for="qsFuel">Fuel level</label>
+              <select id="qsFuel"><?= options_for(FUEL_LEVELS) ?></select></div>
+            <div class="field-group"><label for="qsKmLimit">KM included per day</label>
+              <input type="number" id="qsKmLimit" min="0" inputmode="numeric" /></div>
+            <div class="field-group"><label for="qsExtraKm">Beyond that, per KM (₹)</label>
+              <input type="number" id="qsExtraKm" min="0" inputmode="numeric" /></div>
+          </div>
+        </section>
+
+        <!-- 5. money -->
+        <section class="qs-pane" data-step="5" hidden>
+          <p class="qs-lead">What was agreed, and what was taken now.</p>
+          <div class="modal-row">
+            <div class="field-group"><label for="qsRental">Rental amount (₹)</label>
+              <input type="number" id="qsRental" required min="0" inputmode="numeric" /></div>
+            <div class="field-group"><label for="qsAdvance">Advance taken now (₹)</label>
+              <input type="number" id="qsAdvance" min="0" inputmode="numeric" /></div>
+          </div>
+          <div class="modal-row">
+            <div class="field-group"><label for="qsDeposit">Security deposit (₹)</label>
+              <input type="number" id="qsDeposit" min="0" inputmode="numeric" />
+              <label class="finance-toggle" for="qsDepositTaken">
+                <input type="checkbox" id="qsDepositTaken" /> Taken now</label></div>
+            <div class="field-group"><label for="qsMethod">Paid by</label>
+              <select id="qsMethod"><?= options_for(PAYMENT_METHODS) ?></select></div>
+          </div>
+          <p class="qs-balance" id="qsBalance"></p>
+          <div class="field-group">
+            <label for="qsPayProof">Payment proof</label>
+            <input type="file" id="qsPayProof" accept="image/*" capture="environment" />
+          </div>
+        </section>
+
+        <!-- 6. handover -->
+        <section class="qs-pane" data-step="6" hidden>
+          <p class="qs-lead">The handover. These photographs are what settles an argument later.</p>
+          <div class="field-group">
+            <label for="qsPhotos">Photographs of the car <span class="qs-req">required</span></label>
+            <input type="file" id="qsPhotos" accept="image/*" capture="environment" multiple />
+            <p class="field-hint">All four sides and the dashboard. At least four.</p>
+            <div id="qsPhotoCount" class="qs-photo-count"></div>
+          </div>
+          <div class="field-group"><label for="qsDamage">Damage already on it</label>
+            <textarea id="qsDamage" rows="2" placeholder="Scratches, dents, anything already there"></textarea></div>
+          <div class="field-group"><label for="qsNotes">Driver notes</label>
+            <textarea id="qsNotes" rows="2"></textarea></div>
+          <label class="finance-toggle" for="qsAck">
+            <input type="checkbox" id="qsAck" required />
+            The customer has seen the car and agrees with what is recorded</label>
+        </section>
+
+        <!-- 7. go -->
+        <section class="qs-pane" data-step="7" hidden>
+          <p class="qs-lead">Check this over, then start the rental.</p>
+          <div id="qsSummary" class="qs-summary"></div>
+          <p class="qs-note">Pressing Start Rental books the car, records the money and the
+            odometer, and puts it on rental. It cannot be half done.</p>
+        </section>
+
+        <p class="qs-error" id="qsError" hidden></p>
+
+        <div class="qs-actions">
+          <button type="button" class="btn btn-ghost" id="qsCancel">Cancel</button>
+          <button type="button" class="btn btn-outline" id="qsBack" hidden>Back</button>
+          <button type="button" class="btn btn-primary qs-next" id="qsNext">Next</button>
+          <button type="button" class="btn btn-primary qs-next" id="qsGo" hidden>Start Rental</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- ===== Correct a customer's enquiry ===== -->
   <div class="modal-overlay" id="enquiryEditOverlay" hidden>
     <div class="modal modal-wide">
@@ -1150,5 +1334,8 @@ admin_shell_open($me, 'dashboard', 'Dashboard', true, $migrationError);
   <script src="<?= asset('booking-data.js') ?>"></script>
   <script src="<?= asset('admin.js') ?>"></script>
   <script src="<?= asset('booking-dates.js') ?>"></script>
+  <!-- After admin.js: the driver panel borrows its formatters, its status
+       labels and openBookingDetail rather than keeping a second copy. -->
+  <script src="<?= asset('driver.js') ?>"></script>
 </body>
 </html>

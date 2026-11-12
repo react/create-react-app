@@ -115,7 +115,7 @@ const BIN_ICON =
   '<path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>';
 
 // ---- Tabs ----
-const TAB_PANELS = ['dashboard', 'bookings', 'cars', 'inquiries', 'finance', 'reports'];
+const TAB_PANELS = ['dashboard', 'driver', 'bookings', 'cars', 'inquiries', 'finance', 'reports'];
 document.querySelectorAll('.admin-tab').forEach((tab) => {
   tab.addEventListener('click', () => {
     document.querySelectorAll('.admin-tab').forEach((t) => t.classList.remove('is-on'));
@@ -132,6 +132,13 @@ document.querySelectorAll('.admin-tab').forEach((tab) => {
     // else about the panel is the same list, so there is one of it.
     if (target === 'bookings' && typeof setBookingStatusFilter === 'function') {
       setBookingStatusFilter(tab.dataset.status || 'all');
+    }
+
+    // The driver's own screen loads its counts when it is opened rather than
+    // on every page load: most of the people using the panel never open it,
+    // and it costs two queries.
+    if (target === 'driver' && typeof window.renderDriverPanel === 'function') {
+      window.renderDriverPanel();
     }
 
     // Put the panel in the address bar, so refreshing stays where you were
@@ -2792,6 +2799,10 @@ async function renderBookingDetail(id) {
         ${row('Start', formatDateTime(booking.start_at))}
         ${row('Return', formatDateTime(booking.return_at))}
         ${row('Duration', `${booking.duration_days} day(s)`)}
+        ${booking.source === 'Walk-in' ? row('Started as',
+          'Walk-in at the car'
+          + (booking.driver_name ? ` · ${escapeHTML(booking.driver_name)}` : '')
+          + (booking.started_at ? ` · ${formatDateTime(booking.started_at)}` : '')) : ''}
       </div>
 
       <div class="info-card">

@@ -32,6 +32,11 @@ function admin_nav_groups(): array
     $groups = [
         'Running the day' => [
             ['tab' => 'dashboard', 'label' => 'Dashboard', 'icon' => 'chart'],
+            // The driver's own screen: the day's handovers and pickups, and
+            // the button that starts a walk-in at the car. First in the group
+            // because for the one account that has only these abilities it is
+            // the whole panel, and the office opens it to see the same work.
+            ['tab' => 'driver', 'label' => 'Driver', 'icon' => 'car', 'can' => 'km.create'],
             ['tab' => 'bookings',  'label' => 'Bookings',  'icon' => 'clipboard', 'count' => 'bookingCount', 'can' => 'booking.view'],
             // The same list with its filter already set. Two questions, not
             // one: what is coming in, and what is out right now. A driver

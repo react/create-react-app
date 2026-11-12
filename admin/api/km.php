@@ -15,34 +15,6 @@ require_once __DIR__ . '/../src/booking.php';
  * on the lot with its odometer brought up to date.
  */
 
-/**
- * The handover checklist, as a JSON string to store, or null.
- *
- * Only the items the panel actually sent, and only as ticked or not -- so a
- * checklist saved today is still readable after the list changes, and an item
- * that did not exist then simply is not in it.
- */
-function checklist_json(mixed $sent): ?string
-{
-    if (!is_array($sent) || $sent === []) {
-        return null;
-    }
-    $clean = [];
-    foreach ($sent as $key => $value) {
-        $key = substr(preg_replace('/[^a-z0-9_-]/i', '', (string) $key) ?? '', 0, 40);
-        if ($key !== '') {
-            $clean[$key] = (bool) $value;
-        }
-    }
-    return $clean === [] ? null : json_encode($clean);
-}
-
-/** Whether this database can store one yet. */
-function checklist_ready(): bool
-{
-    return table_has_column('km_records', 'checklist');
-}
-
 $action = $_GET['action'] ?? '';
 
 switch ($action) {
