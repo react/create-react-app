@@ -1023,7 +1023,7 @@ label.finance-toggle {
    tall and reads as a list of buttons. */
 .proof-item { position: relative; display: inline-block; line-height: 0; }
 .proof-item a { display: block; border-radius: 8px; }
-.proof-item a:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.proof-item a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 .proof-remove {
   position: absolute; top: -6px; right: -6px;
@@ -1034,7 +1034,7 @@ label.finance-toggle {
   font-size: 14px; line-height: 1; cursor: pointer;
 }
 .proof-remove:hover { background: var(--danger); border-color: var(--danger); color: #fff; }
-.proof-remove:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
+.proof-remove:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 
 /* A finger is wider than 20px. On a touch screen the target is padded out
    without the button itself growing, which would crowd the thumbnail. */
@@ -2434,13 +2434,6 @@ label.finance-toggle {
   font-size: 0.88rem; font-weight: 600; color: var(--accent-deep); min-height: 1.4em;
 }
 
-/* The word "required" beside a label. Small and uppercase so it reads as a
-   mark on the field rather than as part of the field's name. */
-.qs-req {
-  margin-left: 6px; font-size: 0.68rem; font-weight: 700;
-  text-transform: uppercase; letter-spacing: 0.06em; color: var(--danger);
-}
-
 .qs-summary {
   background: var(--bg); border: 1px solid var(--border);
   border-radius: 12px; padding: 6px 14px;
@@ -2475,3 +2468,123 @@ label.finance-toggle {
 @media (min-width: 620px) {
   .driver-grid { grid-template-columns: repeat(4, 1fr); }
 }
+
+/* ===========================================================================
+   Photographs
+   ===========================================================================
+
+   The native file control is a grey button and a filename with its middle
+   eaten out. Hidden rather than removed: it keeps its id and its name, so
+   everything reading .files and every form that posts normally still works. */
+
+.photo-input input[type="file"] {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0;
+}
+
+.photo-pick { gap: 8px; }
+.photo-pick svg { flex: 0 0 18px; }
+
+/* 14px, not 10: the remove badge sits 7px above its thumbnail, and at 10 it
+   grazed the button above. */
+.photo-strip { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.photo-strip:empty { margin-top: 0; }
+
+/* .field-hint carries a -6px top margin so it tucks under the bottom margin
+   of the input above it. A strip of photographs has no such margin to tuck
+   into, so the hint climbed 6px into the bottom row of thumbnails. */
+.photo-input + .field-hint { margin-top: 8px; }
+
+/* Big enough to tell a number plate from a wheel arch at a glance -- the
+   whole reason the filename was not enough. */
+.photo-chip { position: relative; display: inline-block; line-height: 0; }
+.photo-chip img {
+  width: 104px; height: 104px; object-fit: cover; display: block;
+  border-radius: 10px; border: 1px solid var(--border); background: var(--bg);
+  cursor: zoom-in;
+}
+.photo-chip-name {
+  display: inline-block; max-width: 160px; overflow: hidden; text-overflow: ellipsis;
+  white-space: nowrap; padding: 10px 12px; line-height: 1.3; font-size: 0.8rem;
+  border-radius: 10px; border: 1px solid var(--border); background: var(--bg);
+}
+
+.photo-drop {
+  position: absolute; top: -7px; right: -7px;
+  width: 26px; height: 26px; padding: 0;
+  display: grid; place-items: center;
+  border: 1px solid var(--border); border-radius: 50%;
+  background: var(--surface); color: var(--ink-dim);
+  font-size: 17px; line-height: 1; cursor: pointer;
+  box-shadow: 0 1px 4px rgba(16,24,40,0.18);
+}
+.photo-drop:hover { background: var(--danger); border-color: var(--danger); color: #fff; }
+
+/* The stored thumbnails were 64px, which is a colour and a shape and not much
+   else. Same size as the ones just chosen, so a booking's photographs look
+   the same whether they went up a minute ago or last week. */
+.proof-preview img { width: 104px; height: 104px; cursor: zoom-in; }
+
+/* ---- full view ---- */
+
+.photo-full {
+  position: fixed; inset: 0; z-index: 400;
+  display: flex; align-items: center; justify-content: center; flex-direction: column;
+  gap: 12px; padding: 24px;
+  background: rgba(10, 14, 32, 0.92);
+}
+.photo-full[hidden] { display: none; }
+/* Sized to the box rather than capped by it. max-width alone leaves a picture
+   smaller than the screen at its own size, which for "show me that photo"
+   is the one thing it must not do; contain keeps the shape either way, so a
+   portrait photograph of a licence fits without being cropped or stretched. */
+.photo-full img {
+  width: 100%; height: calc(100vh - 128px);
+  object-fit: contain; border-radius: 10px;
+}
+.photo-full-cap { color: rgba(255,255,255,0.78); font-size: 0.85rem; text-align: center; }
+.photo-full-close {
+  position: absolute; top: 14px; right: 14px;
+  width: 44px; height: 44px; padding: 0;
+  display: grid; place-items: center;
+  border: 0; border-radius: 50%; cursor: pointer;
+  background: rgba(255,255,255,0.14); color: #fff; font-size: 26px; line-height: 1;
+}
+.photo-full-close:hover { background: rgba(255,255,255,0.26); }
+/* The page behind must not scroll under the photograph on a phone. */
+body.photo-full-open { overflow: hidden; }
+
+/* Paired with the camera button, and only once there is more than one to
+   clear: on a single photograph the × on the thumbnail is already enough. */
+.photo-clear {
+  margin-left: 10px; padding: 8px 4px;
+  border: 0; background: none; cursor: pointer;
+  font-family: inherit; font-size: 0.82rem; font-weight: 600;
+  color: var(--ink-dim); text-decoration: underline;
+}
+.photo-clear:hover { color: var(--danger); }
+
+/* ===========================================================================
+   Compulsory fields, and the field that is wrong
+   =========================================================================== */
+
+.req-star {
+  margin-left: 3px; color: var(--danger); font-weight: 700;
+  /* The star is a mark on the label, not part of its name: a touch smaller
+     so "Full name *" does not read as two words of equal weight. */
+  font-size: 0.95em;
+}
+
+/* The complaint, directly under the field it is about. .field-hint already
+   sets the size and the -6px tuck; this only has to carry the colour, which
+   .is-wrong does, and a little room from what it follows. */
+.field-error { margin-top: 6px; }
+
+/* The field itself, so the eye lands on it before reading anything. */
+input.is-wrong, select.is-wrong, textarea.is-wrong {
+  border-color: var(--danger);
+  /* A ring as well as a border: on a phone in daylight a one-pixel colour
+     change on a rounded input is not a signal. */
+  box-shadow: 0 0 0 3px rgba(179, 38, 30, 0.12);
+}
+.photo-input.is-wrong .photo-pick { border-color: var(--danger); color: var(--danger); }

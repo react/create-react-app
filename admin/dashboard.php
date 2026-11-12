@@ -398,13 +398,13 @@ admin_shell_open($me, 'dashboard', 'Dashboard', true, $migrationError);
           <p class="qs-lead">When is the car going out, and when is it due back?</p>
           <div class="modal-row">
             <div class="field-group"><label for="qsStartDate">Pickup date</label>
-              <input type="date" id="qsStartDate" required /></div>
+              <input type="date" id="qsStartDate" data-field="start_at" required /></div>
             <div class="field-group"><label for="qsStartTime">Pickup time</label>
               <input type="time" id="qsStartTime" required /></div>
           </div>
           <div class="modal-row">
             <div class="field-group"><label for="qsReturnDate">Expected return date</label>
-              <input type="date" id="qsReturnDate" required /></div>
+              <input type="date" id="qsReturnDate" data-field="return_at" required /></div>
             <div class="field-group"><label for="qsReturnTime">Expected return time</label>
               <input type="time" id="qsReturnTime" required /></div>
           </div>
@@ -420,7 +420,7 @@ admin_shell_open($me, 'dashboard', 'Dashboard', true, $migrationError);
           </div>
           <p class="qs-note">Only cars free for those dates are listed.</p>
           <div id="qsVehicles" class="qs-vehicles"></div>
-          <input type="hidden" id="qsVehicleId" />
+          <input type="hidden" id="qsVehicleId" data-field="vehicle_id" />
         </section>
 
         <!-- 3. who -->
@@ -428,10 +428,10 @@ admin_shell_open($me, 'dashboard', 'Dashboard', true, $migrationError);
           <p class="qs-lead">Who is taking it?</p>
           <div class="modal-row">
             <div class="field-group"><label for="qsName">Full name</label>
-              <input type="text" id="qsName" required data-rule="name" /></div>
+              <input type="text" id="qsName" data-field="customer_name" required data-rule="name" /></div>
             <div class="field-group"><label for="qsPhone">Mobile number</label>
               <div class="phone-field"><?= dial_select('qsPhoneCode') ?>
-              <input type="tel" id="qsPhone" required inputmode="numeric" data-rule="digits" /></div>
+              <input type="tel" id="qsPhone" data-field="phone" required inputmode="numeric" data-rule="digits" /></div>
               <p class="field-hint" id="qsPhoneHint"></p></div>
           </div>
           <div class="modal-row">
@@ -440,10 +440,10 @@ admin_shell_open($me, 'dashboard', 'Dashboard', true, $migrationError);
               <input type="tel" id="qsAlt" inputmode="numeric" data-rule="digits" /></div>
               <p class="field-hint" id="qsAltHint"></p></div>
             <div class="field-group"><label for="qsLicence">Driving licence number</label>
-              <input type="text" id="qsLicence" required data-rule="upper" /></div>
+              <input type="text" id="qsLicence" data-field="licence_number" required data-rule="upper" /></div>
           </div>
           <div class="field-group"><label for="qsAddress">Address</label>
-            <textarea id="qsAddress" rows="2" placeholder="Door and street&#10;Town"></textarea></div>
+            <textarea id="qsAddress" data-field="address" rows="2" placeholder="Door and street&#10;Town"></textarea></div>
           <div class="field-group">
             <label for="qsIdPhoto">Photograph of the licence or ID</label>
             <input type="file" id="qsIdPhoto" accept="image/*" capture="environment" />
@@ -456,13 +456,13 @@ admin_shell_open($me, 'dashboard', 'Dashboard', true, $migrationError);
           <p class="qs-lead">The car as it leaves.</p>
           <div class="modal-row">
             <div class="field-group"><label for="qsPickupLocation">Pickup location</label>
-              <input type="text" id="qsPickupLocation" placeholder="e.g. Nagercoil Junction" /></div>
+              <input type="text" id="qsPickupLocation" data-field="pickup_location" placeholder="e.g. Nagercoil Junction" /></div>
             <div class="field-group"><label for="qsOdometer">Starting odometer (KM)</label>
-              <input type="number" id="qsOdometer" required min="0" inputmode="numeric" /></div>
+              <input type="number" id="qsOdometer" data-field="odometer_km" required min="0" inputmode="numeric" /></div>
           </div>
           <div class="modal-row modal-row-3">
             <div class="field-group"><label for="qsFuel">Fuel level</label>
-              <select id="qsFuel"><?= options_for(FUEL_LEVELS) ?></select></div>
+              <select id="qsFuel" data-field="fuel_level"><?= options_for(FUEL_LEVELS) ?></select></div>
             <div class="field-group"><label for="qsKmLimit">KM included per day</label>
               <input type="number" id="qsKmLimit" min="0" inputmode="numeric" /></div>
             <div class="field-group"><label for="qsExtraKm">Beyond that, per KM (₹)</label>
@@ -475,13 +475,13 @@ admin_shell_open($me, 'dashboard', 'Dashboard', true, $migrationError);
           <p class="qs-lead">What was agreed, and what was taken now.</p>
           <div class="modal-row">
             <div class="field-group"><label for="qsRental">Rental amount (₹)</label>
-              <input type="number" id="qsRental" required min="0" inputmode="numeric" /></div>
+              <input type="number" id="qsRental" data-field="base_rental" required min="0" inputmode="numeric" /></div>
             <div class="field-group"><label for="qsAdvance">Advance taken now (₹)</label>
-              <input type="number" id="qsAdvance" min="0" inputmode="numeric" /></div>
+              <input type="number" id="qsAdvance" data-field="advance" min="0" inputmode="numeric" /></div>
           </div>
           <div class="modal-row">
             <div class="field-group"><label for="qsDeposit">Security deposit (₹)</label>
-              <input type="number" id="qsDeposit" min="0" inputmode="numeric" />
+              <input type="number" id="qsDeposit" data-field="deposit_required" min="0" inputmode="numeric" />
               <label class="finance-toggle" for="qsDepositTaken">
                 <input type="checkbox" id="qsDepositTaken" /> Taken now</label></div>
             <div class="field-group"><label for="qsMethod">Paid by</label>
@@ -498,15 +498,15 @@ admin_shell_open($me, 'dashboard', 'Dashboard', true, $migrationError);
         <section class="qs-pane" data-step="6" hidden>
           <p class="qs-lead">The handover. These photographs are what settles an argument later.</p>
           <div class="field-group">
-            <label for="qsPhotos">Photographs of the car <span class="qs-req">required</span></label>
-            <input type="file" id="qsPhotos" accept="image/*" capture="environment" multiple />
+            <label for="qsPhotos">Photographs of the car</label>
+            <input type="file" id="qsPhotos" accept="image/*" capture="environment" multiple required />
             <p class="field-hint">All four sides and the dashboard. At least four.</p>
             <div id="qsPhotoCount" class="qs-photo-count"></div>
           </div>
           <div class="field-group"><label for="qsDamage">Damage already on it</label>
             <textarea id="qsDamage" rows="2" placeholder="Scratches, dents, anything already there"></textarea></div>
           <div class="field-group"><label for="qsNotes">Driver notes</label>
-            <textarea id="qsNotes" rows="2"></textarea></div>
+            <textarea id="qsNotes" data-field="notes" rows="2"></textarea></div>
           <label class="finance-toggle" for="qsAck">
             <input type="checkbox" id="qsAck" required />
             The customer has seen the car and agrees with what is recorded</label>
@@ -858,7 +858,8 @@ admin_shell_open($me, 'dashboard', 'Dashboard', true, $migrationError);
               the same size, so the cards line up.</p>
             </div>
 
-            <input type="file" id="carPhoto" accept="image/jpeg,image/png,image/webp,image/avif" />
+            <input type="file" id="carPhoto" accept="image/jpeg,image/png,image/webp,image/avif"
+                   data-photo-preview="off" />
             <p class="field-note">Shown on the website's fleet cards. JPG, PNG, WebP or AVIF,
             up to 6&nbsp;MB. A landscape photo of the whole car works best.</p>
           </div>
@@ -1042,7 +1043,7 @@ admin_shell_open($me, 'dashboard', 'Dashboard', true, $migrationError);
         <div class="field-group"><label for="paymentNotes">Notes</label><input type="text" id="paymentNotes" placeholder="Optional" /></div>
         <div class="field-group">
           <label for="paymentProof">Payment Screenshot / Receipt</label>
-          <input type="file" id="paymentProof" accept="image/*" />
+          <input type="file" id="paymentProof" accept="image/*" data-photo-preview="off" />
           <div class="proof-preview" id="paymentProofPreview"></div>
         </div>
         <div class="modal-actions">
@@ -1079,7 +1080,7 @@ admin_shell_open($me, 'dashboard', 'Dashboard', true, $migrationError);
         <div class="field-group"><label for="depositNotes">Notes</label><input type="text" id="depositNotes" placeholder="Optional" /></div>
         <div class="field-group">
           <label for="depositProof">Deposit Proof</label>
-          <input type="file" id="depositProof" accept="image/*" />
+          <input type="file" id="depositProof" accept="image/*" data-photo-preview="off" />
           <div class="proof-preview" id="depositProofPreview"></div>
         </div>
         <p class="field-hint">This is tracked separately and is <strong>not</strong> counted as rental revenue.</p>
@@ -1120,7 +1121,7 @@ admin_shell_open($me, 'dashboard', 'Dashboard', true, $migrationError);
         <div class="field-group"><label for="refundNotes">Notes</label><input type="text" id="refundNotes" placeholder="Optional" /></div>
         <div class="field-group">
           <label for="refundProof">Refund Proof</label>
-          <input type="file" id="refundProof" accept="image/*" />
+          <input type="file" id="refundProof" accept="image/*" data-photo-preview="off" />
           <div class="proof-preview" id="refundProofPreview"></div>
         </div>
         <div class="modal-actions">
@@ -1216,7 +1217,7 @@ admin_shell_open($me, 'dashboard', 'Dashboard', true, $migrationError);
         </div>
         <div class="field-group">
           <label for="pickupPhotos">Pickup Photos</label>
-          <input type="file" id="pickupPhotos" accept="image/*" multiple />
+          <input type="file" id="pickupPhotos" accept="image/*" multiple data-photo-preview="off" />
           <div class="proof-preview" id="pickupPhotosPreview"></div>
         </div>
         <div class="modal-actions">
@@ -1307,7 +1308,7 @@ admin_shell_open($me, 'dashboard', 'Dashboard', true, $migrationError);
         </div>
         <div class="field-group">
           <label for="returnPhotos">Return Photos</label>
-          <input type="file" id="returnPhotos" accept="image/*" multiple />
+          <input type="file" id="returnPhotos" accept="image/*" multiple data-photo-preview="off" />
           <div class="proof-preview" id="returnPhotosPreview"></div>
         </div>
         <p class="field-hint" id="returnKmPreview"></p>

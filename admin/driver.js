@@ -102,6 +102,7 @@
     for (let i = 1; i <= LAST; i++) pane(i).hidden = i !== n;
     $('qsStepOf').textContent = `Step ${n} of ${LAST}`;
     $('qsBarFill').style.width = `${(n / LAST) * 100}%`;
+    clearFieldErrors(form);
     $('qsBack').hidden = n === 1;
     $('qsNext').hidden = n === LAST;
     $('qsGo').hidden = n !== LAST;
@@ -209,26 +210,68 @@
     $('qsPhotoCount').textContent = n ? `${n} photograph${n === 1 ? '' : 's'} chosen` : '';
   });
 
-  /** What each step insists on before it will let go. */
+  /**
+   * What each step insists on before it will let go.
+   *
+   * Returns the field at fault and what is wrong with it, rather than a
+   * sentence on its own: the complaint goes against the field, where it can
+   * be read and acted on in one place.
+   */
   function stepFault() {
+    const at = (id, message) => ({ id, message });
+
     if (step === 1) {
-      if (!days()) return 'Give a pickup and a return, with the return after the pickup.';
+      if (!$('qsStartDate').value || !$('qsStartTime').value) {
+        return at('qsStartDate', 'When is the car going out?');
+      }
+      if (!$('qsReturnDate').value || !$('qsReturnTime').value) {
+        return at('qsReturnDate', 'When is it due back?');
+      }
+      if (!days()) return at('qsReturnDate', 'The return has to be after the pickup.');
     }
-    if (step === 2 && !$('qsVehicleId').value) return 'Choose the car that is going out.';
+    if (step === 2 && !$('qsVehicleId').value) {
+      return at('qsVehicles', 'Choose the car that is going out.');
+    }
     if (step === 3) {
-      if (!$('qsName').value.trim()) return 'The customer\\u2019s name is needed.';
-      if (!checkPhone('qsPhone', true)) return 'A usable mobile number is needed.';
-      if (!$('qsLicence').value.trim()) return 'The driving licence number is needed.';
+      if (!$('qsName').value.trim()) return at('qsName', "The customer's name is needed.");
+      // checkPhone writes its own hint under the field and colours it, so
+      // this only has to stop the step.
+      if (!checkPhone('qsPhone', true)) return at('qsPhone', '');
+      if (!$('qsLicence').value.trim()) {
+        return at('qsLicence', 'The driving licence number is needed.');
+      }
     }
-    if (step === 4 && $('qsOdometer').value === '') return 'The starting odometer reading is needed.';
-    if (step === 5 && !(Number($('qsRental').value) > 0)) return 'The rental amount is needed.';
+    if (step === 4 && $('qsOdometer').value === '') {
+      return at('qsOdometer', 'The reading on the meter as it leaves.');
+    }
+    if (step === 5 && !(Number($('qsRental').value) > 0)) {
+      return at('qsRental', 'What was agreed for the hire.');
+    }
     if (step === 6) {
       const shots = $('qsPhotos').files.length + $('qsIdPhoto').files.length;
-      if ($('qsPhotos').files.length < 4) return 'At least four photographs of the car, please.';
-      if (shots > 12) return `That is ${shots} photographs with the licence; twelve is the most that can be kept.`;
-      if (!$('qsAck').checked) return 'The customer has to agree with what is recorded.';
+      if ($('qsPhotos').files.length < 4) {
+        return at('qsPhotos', 'At least four photographs of the car, please.');
+      }
+      if (shots > 12) {
+        return at('qsPhotos',
+          `That is ${shots} photographs with the licence; twelve is the most that can be kept.`);
+      }
+      if (!$('qsAck').checked) {
+        return at('qsAck', 'The customer has to agree with what is recorded.');
+      }
     }
-    return '';
+    return null;
+  }
+
+  /** Puts the complaint on its field and takes the driver to it. */
+  function blame(problem) {
+    clearFieldErrors(pane(step));
+    const control = $(problem.id);
+    if (problem.message) fieldError(control, problem.message);
+    else control.classList.add('is-wrong');
+    control.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    // Not focused: on a phone that opens the keyboard over the message just
+    // written. The red and the scroll are the signal.
   }
 
   function summarise() {
@@ -275,7 +318,7 @@
 
   $('qsNext')?.addEventListener('click', async () => {
     const problem = stepFault();
-    if (problem) { fault(problem); return; }
+    if (problem) { blame(problem); return; }
     if (step === 1) await loadVehicles();
     if (step === 6) summarise();
     showStep(step + 1);
@@ -338,7 +381,7 @@
 
   $('qsGo')?.addEventListener('click', async () => {
     const problem = stepFault();
-    if (problem) { fault(problem); return; }
+    if (problem) { blame(problem); return; }
 
     const go = $('qsGo');
     go.disabled = true;
@@ -385,7 +428,17 @@
         { title: 'The car is out' });
       await window.renderDriverPanel();
     } catch (err) {
-      fault(typeof err === 'string' ? err : (err?.message || 'Could not start the rental.'));
+      // 422s name the fields they are about. Those go on the fields; what
+      // cannot be placed -- "that car is already booked" belongs to no box --
+      // stays in the band at the bottom.
+      const placed = err && err.fields
+        ? applyFieldErrors(err.fields, form) : { first: null, stray: [] };
+      if (placed.first) {
+        placed.first.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        fault(placed.stray.join(' '));
+      } else {
+        fault(typeof err === 'string' ? err : (err?.message || 'Could not start the rental.'));
+      }
     } finally {
       go.disabled = false;
       go.textContent = 'Start Rental';
