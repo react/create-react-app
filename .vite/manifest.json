@@ -19,7 +19,7 @@
     "name": "towns"
   },
   "index.html": {
-    "file": "assets/index-D9Z2NFZG.js",
+    "file": "assets/index-BJR0vsCc.js",
     "name": "index",
     "src": "index.html",
     "isEntry": true,
@@ -39,11 +39,11 @@
       "src/pages/Post.tsx"
     ],
     "css": [
-      "assets/index-50TdJBs_.css"
+      "assets/index-DIwW_DVV.css"
     ]
   },
   "src/pages/About.tsx": {
-    "file": "assets/About-CqSJucJw.js",
+    "file": "assets/About-_z9GUAzw.js",
     "name": "About",
     "src": "src/pages/About.tsx",
     "isDynamicEntry": true,
@@ -55,7 +55,7 @@
     ]
   },
   "src/pages/Blog.tsx": {
-    "file": "assets/Blog-DGVf9NVn.js",
+    "file": "assets/Blog-dVxRw-qc.js",
     "name": "Blog",
     "src": "src/pages/Blog.tsx",
     "isDynamicEntry": true,
@@ -67,7 +67,7 @@
     ]
   },
   "src/pages/CarRentalAreas.tsx": {
-    "file": "assets/CarRentalAreas-D-dIIJYu.js",
+    "file": "assets/CarRentalAreas-Ddu_Xlle.js",
     "name": "CarRentalAreas",
     "src": "src/pages/CarRentalAreas.tsx",
     "isDynamicEntry": true,
@@ -79,7 +79,7 @@
     ]
   },
   "src/pages/Contact.tsx": {
-    "file": "assets/Contact-BZnGJ29D.js",
+    "file": "assets/Contact-DeDvLhOZ.js",
     "name": "Contact",
     "src": "src/pages/Contact.tsx",
     "isDynamicEntry": true,
@@ -100,7 +100,7 @@
     ]
   },
   "src/pages/Places.tsx": {
-    "file": "assets/Places-Bt3I-HE6.js",
+    "file": "assets/Places-DzuXBnVC.js",
     "name": "Places",
     "src": "src/pages/Places.tsx",
     "isDynamicEntry": true,
@@ -111,7 +111,7 @@
     ]
   },
   "src/pages/Post.tsx": {
-    "file": "assets/Post-CwO1z0IJ.js",
+    "file": "assets/Post-BW91u69G.js",
     "name": "Post",
     "src": "src/pages/Post.tsx",
     "isDynamicEntry": true,
@@ -124,7 +124,7 @@
     ]
   },
   "src/pages/Services.tsx": {
-    "file": "assets/Services-CYzVsM2x.js",
+    "file": "assets/Services-CdLECUV6.js",
     "name": "Services",
     "src": "src/pages/Services.tsx",
     "isDynamicEntry": true,
@@ -135,7 +135,7 @@
     ]
   },
   "src/pages/Tariff.tsx": {
-    "file": "assets/Tariff-Dsm8CRS4.js",
+    "file": "assets/Tariff-DAzwdjlz.js",
     "name": "Tariff",
     "src": "src/pages/Tariff.tsx",
     "isDynamicEntry": true,
@@ -146,7 +146,7 @@
     ]
   },
   "src/pages/Town.tsx": {
-    "file": "assets/Town-DAelL5uN.js",
+    "file": "assets/Town-BKdBkUxi.js",
     "name": "Town",
     "src": "src/pages/Town.tsx",
     "isDynamicEntry": true,

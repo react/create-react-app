@@ -2203,3 +2203,89 @@ body {
     perspective: none;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   The tariff table, and the cards it becomes.
+   --------------------------------------------------------------------------- */
+
+/* The figure the whole row is read for. */
+.tariff-table .tariff-lead {
+  font-size: 1.05rem;
+}
+
+.tariff-table tbody tr:hover {
+  background: color-mix(in srgb, var(--color-cream) 55%, transparent);
+}
+
+/* Below this the seven columns stop fitting, and the old table answered that
+   by scrolling sideways inside a box: six of the seven columns off the side
+   of a phone, reachable by dragging a rate card. Each row becomes a card
+   instead. Same markup either way -- nothing is rendered twice, so there is
+   one of everything for a crawler and one of everything to keep right. */
+@media (max-width: 64rem) {
+  .tariff-table,
+  .tariff-table tbody,
+  .tariff-table tr,
+  .tariff-table th,
+  .tariff-table td {
+    display: block;
+  }
+
+  /* Off-screen rather than display:none: the column names are what the
+     figures below are labelled by, and a heading row removed from the box is
+     a heading row removed from the accessibility tree with it. */
+  .tariff-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .tariff-row {
+    padding: 0 0 1rem;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .tariff-row:last-child {
+    border-bottom: 0;
+  }
+
+  /* The car's name, as the card's own header. */
+  .tariff-table tbody th {
+    padding: 1rem 1.25rem 0.75rem;
+    font-size: 1rem;
+  }
+
+  /* Label on the left, figure on the right: a column of rupees with its
+     heading two screens up is a column of rupees nobody can use. */
+  .tariff-table tbody td {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.45rem 1.25rem;
+  }
+  .tariff-table tbody td::before {
+    content: attr(data-label);
+    flex: none;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--color-ink-faint);
+    text-transform: uppercase;
+  }
+
+  /* The daily rate is why somebody opened this page. */
+  .tariff-table tbody td.tariff-lead {
+    margin: 0.35rem 0.75rem 0.6rem;
+    padding: 0.6rem 0.75rem;
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--color-cream) 70%, transparent);
+    font-size: 1.2rem;
+  }
+
+  .tariff-table tbody tr:hover {
+    background: none;
+  }
+}

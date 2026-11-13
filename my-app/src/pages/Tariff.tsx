@@ -32,40 +32,76 @@ export function Tariff() {
             and your dates, and we will give you the figure.
           </BrandPanel>
         ) : (
-          <div className="overflow-x-auto rounded-[14px] border border-line bg-white shadow-[0_10px_30px_rgba(16,24,40,0.08)]">
-            <table className="w-full min-w-[44rem] border-collapse text-left text-sm">
-              <thead>
-                <tr className="border-b border-line bg-cream/60 text-xs tracking-wide text-ink-faint uppercase">
-                  <th scope="col" className="px-5 py-3 font-semibold">Car</th>
-                  <th scope="col" className="px-5 py-3 font-semibold">Per day</th>
-                  <th scope="col" className="px-5 py-3 font-semibold">Weekly</th>
-                  <th scope="col" className="px-5 py-3 font-semibold">Monthly</th>
-                  <th scope="col" className="px-5 py-3 font-semibold">KM/day</th>
-                  <th scope="col" className="px-5 py-3 font-semibold">Extra KM</th>
-                  <th scope="col" className="px-5 py-3 font-semibold">Deposit</th>
+          /*
+           * One table, not a table and a stack of cards.
+           *
+           * It was 44rem wide at a minimum inside a horizontal scroller, so
+           * on a phone six of the seven columns were off the side of the
+           * screen and the way to reach them was to drag a rate card
+           * sideways. Below 64rem each row becomes a card instead, with the
+           * column name printed against each figure -- same markup, same
+           * crawl, nothing rendered twice.
+           *
+           * The roles are written out because changing a table's `display`
+           * is what strips its semantics: a screen reader stops announcing
+           * rows and columns the moment the rows stop being rows. Declared,
+           * they survive the layout change.
+           */
+          <div className="tariff-card overflow-hidden rounded-[14px] border border-line bg-white shadow-[0_10px_30px_rgba(16,24,40,0.08)]">
+            <table role="table" className="tariff-table w-full border-collapse text-left text-sm">
+              <caption className="sr-only">
+                Daily, weekly and monthly rates for every car, with the
+                kilometre allowance, the extra-kilometre rate and the deposit.
+              </caption>
+              <thead role="rowgroup">
+                <tr role="row" className="border-b border-line bg-cream/60 text-xs tracking-wide text-ink-faint uppercase">
+                  <th role="columnheader" scope="col" className="px-5 py-3 font-semibold">Car</th>
+                  {/* "Weekly" and "Monthly" are per-day figures too. That was
+                      a footnote under the table, which is the wrong place for
+                      the thing that stops a column being read as a total. */}
+                  <th role="columnheader" scope="col" className="px-5 py-3 font-semibold">Per day</th>
+                  <th role="columnheader" scope="col" className="px-5 py-3 font-semibold">
+                    Weekly <span className="normal-case">(per day)</span>
+                  </th>
+                  <th role="columnheader" scope="col" className="px-5 py-3 font-semibold">
+                    Monthly <span className="normal-case">(per day)</span>
+                  </th>
+                  <th role="columnheader" scope="col" className="px-5 py-3 font-semibold">KM / day</th>
+                  <th role="columnheader" scope="col" className="px-5 py-3 font-semibold">Extra KM</th>
+                  <th role="columnheader" scope="col" className="px-5 py-3 font-semibold">Deposit</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody role="rowgroup">
                 {cars.map((car) => (
-                  <tr key={car.id} className="border-b border-line/70 last:border-0">
-                    <th scope="row" className="px-5 py-4 font-semibold text-navy">
+                  <tr role="row" key={car.id} className="tariff-row border-b border-line/70 last:border-0">
+                    <th role="rowheader" scope="row" className="px-5 py-4 font-semibold text-navy">
                       {car.brand} {car.name}
                       <span className="block text-xs font-normal text-ink-faint">
                         {car.bodyType} · {car.fuel} · {car.transmission}
                       </span>
                     </th>
-                    <td className="px-5 py-4 font-semibold text-navy">{dailyRate(car)}</td>
-                    <td className="px-5 py-4 text-ink-dim">
+                    {/* data-label is what the card layout prints beside each
+                        figure. It repeats the column heading on purpose:
+                        a column of rupees with no heading in sight is a
+                        column of rupees nobody can use. */}
+                    <td role="cell" data-label="Per day" className="tariff-lead px-5 py-4 font-semibold text-navy">
+                      {dailyRate(car)}
+                    </td>
+                    <td role="cell" data-label="Weekly, per day" className="px-5 py-4 text-ink-dim">
                       {orDash(car.rateWeekly)}
                     </td>
-                    <td className="px-5 py-4 text-ink-dim">
+                    <td role="cell" data-label="Monthly, per day" className="px-5 py-4 text-ink-dim">
                       {orDash(car.rateMonthly)}
                     </td>
-                    <td className="px-5 py-4 text-ink-dim">
+                    <td role="cell" data-label="KM / day" className="px-5 py-4 text-ink-dim">
                       {car.kmLimitPerDay > 0 ? `${car.kmLimitPerDay} km` : '—'}
                     </td>
-                    <td className="px-5 py-4 text-ink-dim">{orDash(car.extraKmRate)}</td>
-                    <td className="px-5 py-4 text-ink-dim">{orDash(car.deposit)}</td>
+                    <td role="cell" data-label="Extra KM" className="px-5 py-4 text-ink-dim">
+                      {orDash(car.extraKmRate)}
+                    </td>
+                    <td role="cell" data-label="Deposit" className="px-5 py-4 text-ink-dim">
+                      {orDash(car.deposit)}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -74,9 +110,9 @@ export function Tariff() {
         )}
 
         <p className="mt-6 text-sm leading-relaxed text-ink-faint">
-          Weekly and monthly columns show the <strong>per-day</strong> rate for
-          those rental lengths. The deposit is refundable and returned after the
-          car comes back, less any extra-KM charges or damage.
+          The deposit is refundable and returned after the car comes back, less
+          any extra-KM charges or damage. There is no booking fee on top of
+          these figures.
         </p>
 
         {/* The table raises three questions and answers none of them in full.
