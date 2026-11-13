@@ -2127,3 +2127,79 @@ body {
 #top {
   scroll-margin-top: 88px;
 }
+
+/* ---------------------------------------------------------------------------
+   The fleet carousel on the home page.
+   --------------------------------------------------------------------------- */
+
+/* The perspective lives on the frame, not on each card: one vanishing point
+   for the whole fan, so the cards angle away from the same place. Per card it
+   would give each its own, and the fan reads as six unrelated tilts. */
+.fleet-stage {
+  perspective: 1400px;
+  perspective-origin: 50% 45%;
+  /* The cards fanned out to the sides reach past the frame on purpose, and on
+     a phone that reach was wider than the screen: 696px of content in a
+     390px viewport, which is a page that scrolls sideways.
+
+     clip rather than hidden, because hidden makes this a scroll container --
+     a swipe that starts on the carousel would scroll it instead of moving
+     the page, which is how a carousel becomes a trap on a phone.
+
+     clip is also the one value that leaves the other axis alone: with
+     overflow-x: hidden the vertical axis would become auto too, and the
+     cards' shadows would be cut into a straight edge along the top and
+     bottom. Here they still spill out above and below. */
+  overflow-x: clip;
+}
+
+.fleet-slide {
+  transform-style: preserve-3d;
+  transition-property: transform, opacity;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  /* The card behind is drawn at a smaller scale; without this its text is
+     resampled from the full-size render and comes out soft. */
+  backface-visibility: hidden;
+}
+
+.fleet-arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-top: -22px;
+  border-radius: 50%;
+  border: 1px solid var(--color-line);
+  background: #fff;
+  color: var(--color-navy);
+  box-shadow: 0 10px 30px rgba(16, 24, 40, 0.14);
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease;
+}
+.fleet-arrow:hover {
+  border-color: var(--color-gold);
+  transform: scale(1.06);
+}
+.fleet-arrow:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+}
+
+/* Somebody who has asked for less motion gets the same carousel without the
+   slide: the cards change where they are, they just do not travel there. The
+   component sets the duration to zero; this takes the tilt out as well, so
+   what is left is a plain stack of cards. */
+@media (prefers-reduced-motion: reduce) {
+  .fleet-slide {
+    transition: none;
+  }
+  .fleet-stage {
+    perspective: none;
+  }
+}

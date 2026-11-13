@@ -25,7 +25,7 @@ export function Home() {
           live after the fleet page went. Six of them, with the rest on the
           tariff -- the whole fleet here is a page of scrolling before
           anything else gets a look in. */}
-      <Fleet heading="Explore our cars" limit={6} />
+      <Fleet heading="Explore our cars" view="carousel" />
       <WhyUs />
       <HowItWorks />
       <AreasServed />

@@ -6,6 +6,8 @@ interface WhatsAppButtonProps {
   variant?: 'solid' | 'outline';
   className?: string;
   children?: React.ReactNode;
+  /** -1 takes it out of the tab order, for a card that is not in front yet. */
+  tabIndex?: number;
 }
 
 /**
@@ -20,6 +22,7 @@ export function WhatsAppButton({
   variant = 'solid',
   className = '',
   children,
+  tabIndex,
 }: WhatsAppButtonProps) {
   const number = seo.site.phone.replace(/[^0-9]/g, '');
   const href = `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
@@ -36,6 +39,7 @@ export function WhatsAppButton({
       href={href}
       target="_blank"
       rel="noopener noreferrer"
+      tabIndex={tabIndex}
       className={`${base} ${styles} ${className}`}
     >
       <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
