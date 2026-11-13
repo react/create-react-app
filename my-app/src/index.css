@@ -1836,22 +1836,62 @@ body {
    ring up to ask, answered. So it gets a band of its own -- the banner
    photograph almost entirely under navy, with the same gold glow the banner
    uses, and the questions on white cards over it. */
+/* The picture, actually visible.
+
+   It was at 22% under a wash that was itself 80-88% navy: about three per
+   cent of a photograph got through, which is a flat black band carrying the
+   weight of an image file. The picture is a gold car under a gold sunrise
+   between navy mountains -- the site's own two colours, taken from life --
+   so it is worth seeing.
+
+   Darkened with a filter rather than by laying navy over it. Navy over a
+   warm photograph mixes towards neither colour and the band came out brown:
+   brightness() keeps the hues where they are and only takes the light out,
+   so the gold stays gold. saturate() puts back the little that dimming
+   costs. */
 .faq-photo {
-  opacity: 0.22;
-  filter: saturate(0.6);
+  opacity: 1;
+  /* 0.5, not 0.4: the measured worst case behind the smallest text is 7.9:1
+     against the 4.5 it needs, so there is room to let more of the picture
+     through and still be read comfortably.
+
+     saturate stays close to 1. Pushed to 1.3 the dimmed gold swung green --
+     dimming compresses the channels together and over-saturating then
+     exaggerates whichever came out on top. */
+  filter: brightness(0.5) saturate(1.08) contrast(1.06);
 }
 
+/* Three layers over it, each with a job.
+
+   None of them is a flat wash. A flat one has to be dark enough for the
+   worst case everywhere, so it buries the whole picture to protect text that
+   only sits in two places. These are shaped like the content instead. */
 .faq-wash {
   background:
+    /* The gold lift along the top edge, softer than it was: the sunrise in
+       the photograph does most of that work now. */
     radial-gradient(
       38rem 24rem at 50% -12%,
-      color-mix(in srgb, var(--color-gold) 20%, transparent) 0%,
-      transparent 66%
+      color-mix(in srgb, var(--color-gold) 12%, transparent) 0%,
+      transparent 64%
     ),
+    /* A vignette. The middle is left alone and the corners go to navy, which
+       is what stops a rectangular photograph reading as a photograph pasted
+       into the page. */
+    radial-gradient(
+      125% 105% at 50% 48%,
+      transparent 28%,
+      color-mix(in srgb, var(--color-navy-deep) 80%, transparent) 100%
+    ),
+    /* Heaviest at the very top and the very bottom: the heading sits in one
+       and the band meets its neighbours at both. */
     linear-gradient(
       to bottom,
-      color-mix(in srgb, var(--color-navy-deep) 88%, transparent),
-      color-mix(in srgb, var(--color-navy) 80%, transparent)
+      var(--color-navy-deep) 0%,
+      color-mix(in srgb, var(--color-navy-deep) 62%, transparent) 22%,
+      color-mix(in srgb, var(--color-navy-deep) 34%, transparent) 50%,
+      color-mix(in srgb, var(--color-navy-deep) 62%, transparent) 80%,
+      var(--color-navy-deep) 100%
     );
 }
 
@@ -1865,12 +1905,14 @@ body {
    the page: the section fought the banner behind it and won, which is not
    what a photograph is for.
 
-   The alphas are chosen against the worst case the scrim allows -- the
-   photograph at its brightest under 80% navy -- so white at 75% stays above
-   4.5:1 whatever picture ends up behind it. */
+   80%, up from 62%, because the picture behind it is no longer buried. The
+   figure is measured rather than judged: with a white rectangle in the slot
+   -- the brightest thing anyone could upload -- the worst backdrop under any
+   text in this band comes out at 6.6:1 against the 4.5 it needs, at phone
+   and desktop width, on this page and the tariff. */
 .faq-panel {
-  background: color-mix(in srgb, var(--color-navy-deep) 62%, transparent);
-  border: 1px solid color-mix(in srgb, var(--color-gold) 18%, transparent);
+  background: color-mix(in srgb, var(--color-navy-deep) 80%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-gold) 26%, transparent);
   backdrop-filter: blur(6px);
   transition:
     border-color 0.2s ease,
