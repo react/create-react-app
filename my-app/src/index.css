@@ -2671,3 +2671,24 @@ a.offer-card:hover {
     aspect-ratio: 5 / 4;
   }
 }
+
+/* The sea names in the margin of the district map. Small, spaced and faint:
+   they are there to say which water is which, not to be read first. */
+.map-sea {
+  fill: var(--color-gold-light);
+  fill-opacity: 0.55;
+  font-size: 10px;
+  font-weight: 600;
+  font-style: italic;
+  letter-spacing: 0.16em;
+}
+
+/* The plate behind each town's name on the district map. The land's own
+   cream, so on the land it disappears and the name reads as printed on it;
+   out at sea it is a chip, which is what a chart would do. */
+.map-plate {
+  fill: #fffdf8;
+  fill-opacity: 0.94;
+  stroke: rgb(212 175 55 / 0.4);
+  stroke-width: 0.8;
+}
