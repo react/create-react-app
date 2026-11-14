@@ -204,14 +204,25 @@ admin_shell_open($me, 'content.php', 'Website content');
     </summary>
     <div class="c-fold-body">
     <p class="c-note">
-      Every picture on the website, in the order it appears: the two brand
-      marks, the banner across the top of each page, the home page, the six
-      cards under &ldquo;What we hire&rdquo; and the three steps. A slot with
-      nothing in it keeps the drawing the site ships with, so an unfinished set
-      still looks finished. PNG with a transparent background looks best for
-      the logo; it sits on the dark header, so light artwork reads better than
-      dark. The logo is kept exactly as it is drawn -- the banners are framed
-      to the shape the page lays them out in. Up to 6&nbsp;MB each.
+      Every picture on the website, in the order it appears down the page: the
+      logo, the banner across the top of each page, then the home page &mdash;
+      its background, the four tiles in the banner, the offer cards, the six
+      photographs beside &ldquo;why hire from us&rdquo;, the questions panel
+      and the map panel &mdash; then the six cards under &ldquo;What we
+      hire&rdquo; and the picture between the steps.
+    </p>
+    <p class="c-note">
+      A slot with nothing in it keeps the drawing the site ships with, so an
+      unfinished set still looks finished and these can be filled in one at a
+      time. The six beside &ldquo;why hire from us&rdquo; work the same way:
+      however many are uploaded is how many the collage shows.
+    </p>
+    <p class="c-note">
+      PNG with a transparent background looks best for the logo; it sits on the
+      dark header, so light artwork reads better than dark. The logo is kept
+      exactly as it is drawn &mdash; everything else is framed to the shape the
+      page lays it out in, which is the shape printed under each slot. Up to
+      6&nbsp;MB each.
     </p>
     <p class="c-note">
       An upload appears on the website within a minute. If one does not, open

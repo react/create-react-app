@@ -1,6 +1,6 @@
 {
   "note": "Places worth driving to, baked into the build so /places is not served to a crawler as 'The list is on its way'. Refreshed from the panel by scripts/fetch-places.mjs, which keeps this file when the panel cannot be reached. Distances are approximate road distances from Nagercoil, which is where the vehicles are kept -- a straight-line figure is not the number anybody plans a day around.",
-  "fetched": "2026-11-14T10:12:19.813Z",
+  "fetched": "2026-11-14T10:20:36.517Z",
   "live": true,
   "places": [
     {
