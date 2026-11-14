@@ -60,7 +60,7 @@ export function Fleet({ heading = 'Our fleet', limit, view = 'grid' }: FleetProp
           </p>
         </div>
 
-        {empty || view === 'carousel' ? null : (
+        {empty ? null : (
         <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by body type">
           {filters.map((f) => {
             const active = f === filter;

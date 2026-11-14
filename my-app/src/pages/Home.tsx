@@ -5,6 +5,7 @@ import { HowItWorks } from '../components/HowItWorks';
 import { AreasServed } from '../components/AreasServed';
 import { PlacesTeaser } from '../components/PlacesTeaser';
 import { Services } from '../components/Services';
+import { Chooser } from '../components/Chooser';
 import { Fleet } from '../components/Fleet';
 import { WhyUs } from '../components/WhyUs';
 import { Faq } from '../components/Faq';
@@ -19,15 +20,22 @@ export function Home() {
   return (
     <>
       <Hero />
-      <Services />
-      {/* The cars themselves, high up: "what have you got" is the question
-          under every other one on this page, and the listing had nowhere to
-          live after the fleet page went. Six of them, with the rest on the
-          tariff -- the whole fleet here is a page of scrolling before
-          anything else gets a look in. */}
-      <Fleet heading="Explore our cars" view="carousel" />
-      <WhyUs />
+      {/* Four ways in, straight under the hero: a car for a day, for a week,
+          for a month, or two wheels. Somebody arriving wants one of those
+          four, not a home page. */}
+      <Chooser />
+      {/* Then what it takes to book one, before what there is to book. The
+          order is the one the reference site uses and it is the right way
+          round: "how does this work" is the question that stops a booking,
+          and it is cheaper to answer it than to answer it twice on the
+          phone. */}
       <HowItWorks />
+      {/* The cars themselves. "What have you got" is the question under
+          every other one on this page, and the listing had nowhere to live
+          after the fleet page went. */}
+      <Fleet heading="Explore our cars" view="carousel" />
+      <Services />
+      <WhyUs />
       <AreasServed />
       <PlacesTeaser />
       {/* Six of the ten. The rest are on the tariff page, which is where

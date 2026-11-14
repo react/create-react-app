@@ -35,6 +35,7 @@ interface FleetCarouselProps {
 export function FleetCarousel({ cars, moreHref, moreLabel }: FleetCarouselProps) {
   const [at, setAt] = useState(0);
   const [motion, setMotion] = useState(true);
+  const [tall, setTall] = useState<number>();
   const frame = useRef<HTMLDivElement>(null);
   const touch = useRef<{ x: number; y: number } | null>(null);
   const count = cars.length;
@@ -46,6 +47,40 @@ export function FleetCarousel({ cars, moreHref, moreLabel }: FleetCarouselProps)
     q.addEventListener('change', read);
     return () => q.removeEventListener('change', read);
   }, []);
+
+  /*
+   * The stage is as tall as the tallest card, measured rather than guessed.
+   *
+   * It was a number in the markup, and the number was wrong for data that
+   * had not been tried: a car whose name wraps to two lines makes a card
+   * 579px tall, the stage was 576, and the three pixels that stuck out sat
+   * on the row of dots underneath. A rate with a monthly line does the same.
+   * Nothing in the panel stops either, so the height has to come from what
+   * is actually on screen.
+   *
+   * offsetHeight, not the bounding box: the cards behind are scaled down by
+   * a transform, and the box reports what was painted rather than what was
+   * laid out.
+   */
+  useEffect(() => {
+    const el = frame.current;
+    if (!el) return;
+
+    const measure = () => {
+      let max = 0;
+      el.querySelectorAll<HTMLElement>('.fleet-slide > *').forEach((card) => {
+        max = Math.max(max, card.offsetHeight);
+      });
+      if (max > 0) setTall(max);
+    };
+
+    measure();
+    // Fonts arriving, a phone turning, the panel answering with a longer
+    // name than the one baked into the build -- all of them change it.
+    const watch = new ResizeObserver(measure);
+    el.querySelectorAll('.fleet-slide').forEach((slide) => watch.observe(slide));
+    return () => watch.disconnect();
+  }, [cars]);
 
   // Wrapping, so the arrows never dead-end and the fan always has something
   // in it on both sides.
@@ -96,7 +131,12 @@ export function FleetCarousel({ cars, moreHref, moreLabel }: FleetCarouselProps)
         onKeyDown={onKey}
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
-        className="fleet-stage relative mx-auto flex h-[36rem] max-w-5xl items-center justify-center focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold"
+        // The class is the floor for the first paint and for the prerendered
+        // HTML, where nothing has been measured yet; the measurement replaces
+        // it as soon as there is one. Generous on purpose: too tall for a
+        // moment is a gap, too short is a card sitting on the dots.
+        style={tall ? { height: tall } : undefined}
+        className="fleet-stage relative mx-auto flex h-[37rem] max-w-5xl items-center justify-center focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold"
       >
         {cars.map((car, i) => {
           const d = offsetOf(i);
@@ -118,7 +158,7 @@ export function FleetCarousel({ cars, moreHref, moreLabel }: FleetCarouselProps)
                 zIndex: WINGS + 1 - away,
                 transitionDuration: motion ? '450ms' : '0ms',
               }}
-              className="fleet-slide absolute w-[19rem] sm:w-[21rem]"
+              className="fleet-slide absolute w-[21rem] sm:w-[24rem]"
             >
               <CarCard car={car} offstage={!here} />
             </div>

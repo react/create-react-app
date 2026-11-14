@@ -204,8 +204,9 @@ export function About() {
           Where we drive
         </h2>
         <p className="mt-3 text-ink-dim">
-          The whole of {seo.site.district} district. These twelve towns have a page
-          of their own; everywhere between them is a phone call.
+          The whole of {seo.site.district} district. These{' '}
+          {townData.towns.length} towns have a page of their own; everywhere
+          between them is a phone call.
         </p>
         <ul className="mt-5 flex flex-wrap gap-2.5">
           {townData.towns.map((town) => (

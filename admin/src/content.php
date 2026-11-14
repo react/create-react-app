@@ -50,6 +50,20 @@ function content_schema(): array
                         'secondaryLabel' => ['label' => 'Second button', 'type' => 'text'],
                         'secondaryHref'  => ['label' => 'Second button link', 'type' => 'text'],
                         'points'         => ['label' => 'Tick points', 'type' => 'list'],
+                        // Three figures under the intro. In the panel rather
+                        // than in the component for the reason every claim on
+                        // this site is: a number written into the code is a
+                        // number nobody can correct without a deploy, and
+                        // these are the ones that go stale first.
+                        'stats'          => [
+                            'label'  => 'Figures under the intro',
+                            'note'   => 'Three works best. Leave empty to show none.',
+                            'type'   => 'repeater',
+                            'fields' => [
+                                'figure' => ['label' => 'Figure', 'type' => 'text'],
+                                'label'  => ['label' => 'What it counts', 'type' => 'text'],
+                            ],
+                        ],
                         // The short enquiry card beside the heading. Four
                         // boxes, so the words above them are most of what
                         // decides whether anybody fills it in.
@@ -98,6 +112,23 @@ function content_schema(): array
                         ],
                     ],
                 ],
+                'chooser' => [
+                    'label'  => 'What are you looking for',
+                    'note'   => 'The row of choices under the hero. Each one goes somewhere that answers it.',
+                    'fields' => [
+                        'heading' => ['label' => 'Heading', 'type' => 'text'],
+                        'items'   => [
+                            'label'  => 'Choices',
+                            'type'   => 'repeater',
+                            'fields' => [
+                                'label' => ['label' => 'Label', 'type' => 'text'],
+                                'note'  => ['label' => 'Line under it', 'type' => 'text'],
+                                'href'  => ['label' => 'Link', 'type' => 'text'],
+                            ],
+                        ],
+                    ],
+                ],
+
                 'howItWorks' => [
                     'label'  => 'How it works',
                     'fields' => [

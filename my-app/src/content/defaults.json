@@ -17,6 +17,45 @@
         "Delivered to your doorstep",
         "Zero hidden charges",
         "Day, week or month"
+      ],
+      "stats": [
+        {
+          "figure": "1000+",
+          "label": "customers"
+        },
+        {
+          "figure": "20+",
+          "label": "cars and bikes"
+        },
+        {
+          "figure": "20",
+          "label": "towns we deliver to"
+        }
+      ]
+    },
+    "chooser": {
+      "heading": "What are you looking for?",
+      "items": [
+        {
+          "label": "A car for a day or two",
+          "note": "Our daily rate, on every car",
+          "href": "/tariff"
+        },
+        {
+          "label": "A week or more",
+          "note": "The daily rate comes down",
+          "href": "/tariff"
+        },
+        {
+          "label": "A month or more",
+          "note": "Our lowest daily rate",
+          "href": "/services#monthly"
+        },
+        {
+          "label": "A bike or scooter",
+          "note": "By the hour, the day or the week",
+          "href": "/services#bikes"
+        }
       ]
     },
     "services": {

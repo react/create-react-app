@@ -49,7 +49,7 @@ const ICONS = {
  */
 function Spec({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
-    <div className="flex items-center gap-2 rounded-lg border border-line border-l-[3px] border-l-gold bg-cream/60 px-2.5 py-2">
+    <div className="flex items-center gap-2 rounded-lg border border-line border-l-[3px] border-l-gold bg-cream/60 px-2.5 py-1.5">
       <svg
         aria-hidden="true"
         width="15"
@@ -102,7 +102,7 @@ export function CarCard({ car, offstage = false }: { car: Car; offstage?: boolea
       data-lift=""
       className="flex h-full flex-col overflow-hidden rounded-[14px] border border-line bg-white shadow-[0_10px_30px_rgba(16,24,40,0.08)]"
     >
-      <div className="relative aspect-[16/10] bg-cream">
+      <div className="relative aspect-[16/9] bg-cream">
         {/* No photograph yet falls through to the drawing the rest of the
             site uses, not a grey initial: a card with a picture on it reads
             as a vehicle for hire, and a card with a letter on it reads as a
@@ -126,7 +126,7 @@ export function CarCard({ car, offstage = false }: { car: Car; offstage?: boolea
         </span>
       </div>
 
-      <div className="flex flex-1 flex-col p-5">
+      <div className="flex flex-1 flex-col px-5 py-4">
         <h3 className="text-lg font-bold text-navy">{car.name}</h3>
         <p className="mt-0.5 text-[13px] font-semibold text-ink-faint">
           {car.brand}
@@ -137,7 +137,7 @@ export function CarCard({ car, offstage = false }: { car: Car; offstage?: boolea
             same four appear in the same two corners on every card, so two
             cars are compared by looking at one spot twice instead of reading
             both. */}
-        <dl className="mt-4 grid grid-cols-2 gap-2">
+        <dl className="mt-3 grid grid-cols-2 gap-1.5">
           <Spec icon={ICONS.seats} label="Seats" value={`${car.seats} seats`} />
           <Spec icon={ICONS.fuel} label="Fuel" value={car.fuel} />
           <Spec icon={ICONS.gear} label="Transmission" value={car.transmission} />
@@ -149,7 +149,7 @@ export function CarCard({ car, offstage = false }: { car: Car; offstage?: boolea
             — deposit": three dashes in a row, which looks like the page is
             broken rather than like figures nobody has entered yet. */}
         {terms.length > 0 ? (
-          <p className="mt-3 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs text-ink-faint">
+          <p className="mt-2.5 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs text-ink-faint">
             {terms.map((t, n) => (
               <span key={t} className="contents">
                 {/* A gold hairline rather than an interpunct, matching the
@@ -167,19 +167,19 @@ export function CarCard({ car, offstage = false }: { car: Car; offstage?: boolea
             ))}
           </p>
         ) : (
-          <p className="mt-3 text-xs text-ink-faint">
+          <p className="mt-2.5 text-xs text-ink-faint">
             KM limit and deposit agreed when you book.
           </p>
         )}
 
         {/* Price and the way to act on it, side by side on the last line.
             They are one decision and they were two blocks. */}
-        <div className="mt-auto flex items-end justify-between gap-3 border-t border-line pt-4">
+        <div className="mt-auto flex items-end justify-between gap-3 border-t border-line pt-3">
           <div>
             {/* A band when the panel carries an upper rate, one figure
                 otherwise -- dailyRate decides, so this card and the tariff
                 table can never disagree about the price. */}
-            <p className="text-2xl leading-none font-bold text-navy">{dailyRate(car)}</p>
+            <p className="text-xl leading-none font-bold text-navy sm:text-2xl">{dailyRate(car)}</p>
             {car.rateDaily > 0 ? (
               <p className="mt-1 text-[11px] font-semibold tracking-wide text-ink-faint uppercase">
                 per day
@@ -204,7 +204,7 @@ export function CarCard({ car, offstage = false }: { car: Car; offstage?: boolea
         <Link
           to={`/contact?car=${encodeURIComponent(label)}`}
           tabIndex={skip}
-          className="tap-target mt-2 block py-2 text-center text-sm font-semibold text-ink-dim transition hover:text-navy"
+          className="tap-target mt-1.5 w-full justify-center py-1.5 text-center text-sm font-semibold text-ink-dim transition hover:text-navy"
         >
           Or send an enquiry
         </Link>

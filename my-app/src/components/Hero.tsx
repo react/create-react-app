@@ -5,6 +5,9 @@ import { HeroEnquiry } from './HeroEnquiry';
 export function Hero() {
   const home = useHome();
   const h = home.hero;
+  // Absent until the panel has been saved once since the field was added, so
+  // the hero has to work without it rather than throw on the map below.
+  const stats = h.stats ?? [];
 
   // The banner photograph. The one that used to be here was a 383px-wide
   // portrait stretched across the whole width, which is why it looked wrong --
@@ -114,6 +117,29 @@ export function Hero() {
             <p data-hero-item="" style={{ ['--hero-delay' as string]: '260ms' }} className="mt-4 max-w-xl text-[15px] leading-relaxed text-white/85 sm:text-white/75">
               {h.intro}
             </p>
+
+            {/* Three figures, where the reference site puts them: under the
+                sentence that makes the claim, before the buttons that ask
+                for the click. The panel's words and the panel's numbers --
+                a figure in a component is a figure nobody can correct
+                without a deploy, and these are the ones that go stale. */}
+            {stats.length > 0 ? (
+              <dl data-hero-item="" style={{ ['--hero-delay' as string]: '300ms' }} className="mt-6 flex flex-wrap gap-x-8 gap-y-4">
+                {stats.map((s) => (
+                  <div key={s.label}>
+                    <dt className="sr-only">{s.label}</dt>
+                    <dd>
+                      <span className="block text-2xl leading-none font-bold text-gold sm:text-[1.75rem]">
+                        {s.figure}
+                      </span>
+                      <span className="mt-1 block text-[12.5px] font-semibold tracking-wide text-white/70 uppercase">
+                        {s.label}
+                      </span>
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            ) : null}
 
             <div data-hero-item="" style={{ ['--hero-delay' as string]: '340ms' }} className="mt-7 grid grid-cols-1 gap-3 min-[380px]:grid-cols-2 sm:flex sm:flex-wrap">
               <ContentLink
