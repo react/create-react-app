@@ -176,6 +176,8 @@
     },
     "reviews": {
       "heading": "What customers say",
+      "sourceUrl": "",
+      "sourceLabel": "Read them all on Google",
       "items": []
     },
     "howItWorks": {

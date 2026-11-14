@@ -138,7 +138,24 @@ function content_schema(): array
                         . 'people actually wrote: a Google review, or a message somebody sent on WhatsApp. '
                         . 'Use the name they posted under. Four to eight reads best.',
                     'fields' => [
-                        'heading' => ['label' => 'Heading', 'type' => 'text'],
+                        'heading'     => ['label' => 'Heading', 'type' => 'text'],
+                        // Where they can be read in full, by somebody who
+                        // would rather check than take our word for it. A
+                        // wall of praise a business has typed about itself
+                        // is worth less than four of them with a link to
+                        // where anyone can count the rest.
+                        'sourceUrl'   => [
+                            'label' => 'Link to all of them',
+                            'type'  => 'text',
+                            'hint'  => 'Your Google listing, so anyone can read the rest and see how many there are. '
+                                . 'Open your business on Google Maps, press Share and copy the link. Leave it empty '
+                                . 'and no link is shown.',
+                        ],
+                        'sourceLabel' => [
+                            'label' => 'Link text',
+                            'type'  => 'text',
+                            'hint'  => 'Such as "Read them all on Google".',
+                        ],
                         'items'   => [
                             'label'  => 'Reviews',
                             'type'   => 'repeater',

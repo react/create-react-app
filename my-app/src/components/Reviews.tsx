@@ -1,4 +1,5 @@
 import { useHome } from '../content';
+import { ContentLink } from './ContentLink';
 import { Reveal } from './Reveal';
 
 /**
@@ -84,6 +85,23 @@ export function Reviews() {
           </Reveal>
         ))}
       </div>
+
+      {/* Where the rest can be read, by somebody who would rather check than
+          take our word for it. Four quotations a business has put on its own
+          site are worth a good deal less without it. */}
+      {reviews.sourceUrl ? (
+        <Reveal>
+          <ContentLink
+            to={reviews.sourceUrl}
+            className="group mt-1 inline-flex items-center gap-1.5 text-[13px] font-semibold text-navy transition hover:text-gold-deep"
+          >
+            {reviews.sourceLabel || 'Read them all'}
+            <span aria-hidden="true" className="transition group-hover:translate-x-0.5">
+              →
+            </span>
+          </ContentLink>
+        </Reveal>
+      ) : null}
     </div>
   );
 }
