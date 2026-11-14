@@ -3,6 +3,7 @@ import { dailyRate, orDash } from '../data/cars';
 import { useFleet } from '../lib/useFleet';
 import { PageHeader } from './PageHeader';
 import { BrandPanel } from '../components/BrandPanel';
+import { WhatsAppButton } from '../components/WhatsAppButton';
 import { Faq } from '../components/Faq';
 import tariffFaq from '../data/tariff-faq.json';
 // @ts-expect-error -- plain ESM, shared verbatim with the build so the
@@ -69,6 +70,9 @@ export function Tariff() {
                   <th role="columnheader" scope="col" className="px-5 py-3 font-semibold">KM / day</th>
                   <th role="columnheader" scope="col" className="px-5 py-3 font-semibold">Extra KM</th>
                   <th role="columnheader" scope="col" className="px-5 py-3 font-semibold">Deposit</th>
+                  {/* Named, not blank: a column with no heading is a column a
+                      screen reader announces as nothing at all. */}
+                  <th role="columnheader" scope="col" className="px-5 py-3 font-semibold">Book</th>
                 </tr>
               </thead>
               <tbody role="rowgroup">
@@ -101,6 +105,24 @@ export function Tariff() {
                     </td>
                     <td role="cell" data-label="Deposit" className="px-5 py-4 text-ink-dim">
                       {orDash(car.deposit)}
+                    </td>
+                    {/* The rate goes into the message. Somebody books from
+                        this page having just read a figure, and an enquiry
+                        that arrives without it is an enquiry that starts by
+                        asking what they were looking at. Left out when the
+                        panel has published none, because "(On request per
+                        day)" is not a thing to quote back. */}
+                    <td role="cell" className="tariff-book px-5 py-4">
+                      <WhatsAppButton
+                        className="w-full px-4 py-2 text-sm sm:w-auto"
+                        message={
+                          `Hello, I would like to book the ${car.brand} ${car.name}` +
+                          (car.rateDaily > 0 ? ` (${dailyRate(car)} per day)` : '') +
+                          '.'
+                        }
+                      >
+                        Book
+                      </WhatsAppButton>
                     </td>
                   </tr>
                 ))}

@@ -2217,6 +2217,13 @@ body {
   background: color-mix(in srgb, var(--color-cream) 55%, transparent);
 }
 
+/* The action column takes only what the button needs; the figures keep the
+   rest, which is what the table is read for. */
+.tariff-table .tariff-book {
+  width: 1%;
+  white-space: nowrap;
+}
+
 /* Below this the seven columns stop fitting, and the old table answered that
    by scrolling sideways inside a box: six of the seven columns off the side
    of a phone, reachable by dragging a rate card. Each row becomes a card
@@ -2287,5 +2294,21 @@ body {
 
   .tariff-table tbody tr:hover {
     background: none;
+  }
+
+  /* The booking button sits across the foot of the card. No printed label on
+     this one -- the button says "Book" already, and "BOOK  Book" is what the
+     rule above would otherwise produce. */
+  .tariff-table tbody td.tariff-book {
+    display: block;
+    padding: 0.75rem 1.25rem 0.25rem;
+    /* The rule that squeezes this column on a desktop -- width: 1%, so the
+       figures keep the room -- is not scoped to the table, and a block at
+       1% is a 40px box with a button crushed inside it. Undone here. */
+    width: auto;
+    white-space: normal;
+  }
+  .tariff-table tbody td.tariff-book::before {
+    content: none;
   }
 }
