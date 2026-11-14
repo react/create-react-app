@@ -3,6 +3,7 @@ import { RAIL_REPEAT, useRailCrawl } from '../lib/useRailCrawl';
 import { useHome } from '../content';
 import { Reveal } from './Reveal';
 import { SectionArt } from './art/SectionArt';
+import { Icon } from './Icon';
 import { hasScene } from './art/scenes';
 import { serviceHref } from '../lib/serviceAnchor';
 
@@ -54,6 +55,38 @@ export function Services({ showHeading = true }: { showHeading?: boolean }) {
         {...(copy ? { tabIndex: -1, 'aria-hidden': true } : {})}
         className="card-lift group flex h-full flex-col overflow-hidden rounded-[16px] border border-line bg-white shadow-[0_10px_30px_rgba(16,24,40,0.08)]"
       >
+        {/* The words first and the picture under them. It was the other way
+            round, which put six photographs in a row across the page and the
+            six headings below the fold of the card -- so the rail read as a
+            gallery rather than as a list of what the business does. */}
+        <div className="flex flex-1 flex-col p-5 pb-3">
+          <div className="flex items-start gap-3">
+            <span
+              aria-hidden="true"
+              className="grid size-10 shrink-0 place-items-center rounded-xl bg-gold/12 text-gold-deep transition group-hover:bg-gold/20"
+            >
+              <Icon name={s.icon} size={21} />
+            </span>
+            <CardHeading className="pt-1.5 text-[17px] leading-snug font-bold text-navy">
+              {s.title}
+            </CardHeading>
+          </div>
+
+          <p className="mt-3 text-sm leading-relaxed text-ink-dim">{s.body}</p>
+
+          <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-gold-deep">
+            See details
+            <span
+              aria-hidden="true"
+              className="grid size-6 place-items-center rounded-full border border-gold/45 bg-gold/10 transition group-hover:translate-x-0.5 group-hover:bg-gold/20"
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12h13M12 5l7 7-7 7" />
+              </svg>
+            </span>
+          </span>
+        </div>
+
         {/* Falls back to a plain navy panel rather than breaking if a service
             is added to the content file before it has a scene.
 
@@ -62,21 +95,12 @@ export function Services({ showHeading = true }: { showHeading?: boolean }) {
             the sentence. An uploaded picture of a wedding car with alt="" is
             a picture Google cannot read, on a site whose traffic comes from
             searching for exactly that. */}
-        {hasScene(s.to) ? (
-          <SectionArt name={s.to} alt={copy ? '' : s.title} />
-        ) : (
-          <div className="art-frame" />
-        )}
-
-        <div className="flex flex-1 flex-col p-5">
-          <CardHeading className="text-lg font-semibold text-navy">{s.title}</CardHeading>
-          <p className="mt-2 text-sm leading-relaxed text-ink-dim">{s.body}</p>
-          <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-gold-deep">
-            See details
-            <span aria-hidden="true" className="transition group-hover:translate-x-1">
-              →
-            </span>
-          </span>
+        <div className="service-leaf-wrap px-5 pb-5">
+          {hasScene(s.to) ? (
+            <SectionArt name={s.to} className="service-leaf" alt={copy ? '' : s.title} />
+          ) : (
+            <div className="art-frame service-leaf" />
+          )}
         </div>
       </Link>
     </div>

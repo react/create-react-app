@@ -41,7 +41,26 @@ type Status =
   | { kind: 'sent'; ref: string | null }
   | { kind: 'error'; message: string };
 
-export function HeroEnquiry({ title, note }: { title: string; note: string }) {
+/**
+ * `bar` is the same form laid along a band rather than stacked in a card.
+ *
+ * It is the same markup and the same handler: a second component would be a
+ * second place to fix the next thing found wrong with either. Only the grid
+ * changes, and only from the laptop up -- on a phone there is no width to
+ * lay anything along, so a bar is a card.
+ */
+export type EnquiryLayout = 'card' | 'bar';
+
+export function HeroEnquiry({
+  title,
+  note,
+  layout = 'card',
+}: {
+  title: string;
+  note: string;
+  layout?: EnquiryLayout;
+}) {
+  const bar = layout === 'bar';
   const [status, setStatus] = useState<Status>({ kind: 'idle' });
   const [start, setStart] = useState('');
   const [back, setBack] = useState('');
@@ -93,7 +112,7 @@ export function HeroEnquiry({ title, note }: { title: string; note: string }) {
 
   if (status.kind === 'sent') {
     return (
-      <div className="hero-card rounded-2xl bg-white p-5 text-center sm:p-6">
+      <div className={`hero-card rounded-2xl bg-white p-5 text-center sm:p-6 ${bar ? 'enquiry-bar' : ''}`}>
         <p aria-hidden="true" className="text-3xl text-ok">✓</p>
         <h2 className="mt-2 text-xl font-bold text-navy">We have it</h2>
         <p className="mt-2 text-sm leading-relaxed text-ink-dim">
@@ -118,12 +137,26 @@ export function HeroEnquiry({ title, note }: { title: string; note: string }) {
   const sending = status.kind === 'sending';
 
   return (
-    <div className="hero-card rounded-2xl bg-white p-3.5 sm:p-5">
-      <h2 className="text-[16px] font-bold text-navy sm:text-[17px]">{title}</h2>
-      <p className="mt-0.5 text-[12px] leading-snug text-ink-dim">{note}</p>
+    <div
+      className={`hero-card rounded-2xl bg-white p-3.5 sm:p-5 ${
+        bar ? 'enquiry-bar lg:flex lg:items-start lg:gap-7 lg:p-6' : ''
+      }`}
+    >
+      <div className={bar ? 'lg:w-[15rem] lg:shrink-0 lg:pt-1' : ''}>
+        <h2 className={`font-bold text-navy ${bar ? 'text-[17px] sm:text-[19px]' : 'text-[16px] sm:text-[17px]'}`}>
+          {title}
+        </h2>
+        <p className="mt-0.5 text-[12px] leading-snug text-ink-dim">{note}</p>
+      </div>
 
-      <form onSubmit={handleSubmit} className="mt-3 space-y-2 sm:mt-4 sm:space-y-2.5" noValidate={false}>
-        <div>
+      <form
+        onSubmit={handleSubmit}
+        className={`mt-3 space-y-2 sm:mt-4 sm:space-y-2.5 ${
+          bar ? 'lg:mt-0 lg:grid lg:min-w-0 lg:flex-1 lg:grid-cols-12 lg:gap-x-3 lg:gap-y-3 lg:space-y-0' : ''
+        }`}
+        noValidate={false}
+      >
+        <div className={bar ? 'lg:col-span-3' : ''}>
           <label className={cap} htmlFor="heroName">Your name</label>
           <input id="heroName" name="name" required autoComplete="name"
                  placeholder="Name" className={box} />
@@ -133,15 +166,19 @@ export function HeroEnquiry({ title, note }: { title: string; note: string }) {
             was taking goes to the car instead. Without a fleet to choose from
             it keeps the whole row, rather than sitting oddly at two fifths of
             it beside nothing. */}
-        <div className={cars.length ? 'grid grid-cols-5 gap-2 sm:gap-2.5' : ''}>
-          <div className={cars.length ? 'col-span-2' : ''}>
+        <div
+          className={`${cars.length ? 'grid grid-cols-5 gap-2 sm:gap-2.5' : ''} ${
+            bar ? 'lg:contents' : ''
+          }`}
+        >
+          <div className={`${cars.length ? 'col-span-2' : ''} ${bar ? 'lg:col-span-2' : ''}`}>
             <label className={cap} htmlFor="heroPhone">Phone</label>
             <input id="heroPhone" name="phone" required type="tel" inputMode="tel"
                    autoComplete="tel" placeholder="10-digit" className={box} />
           </div>
 
           {cars.length ? (
-            <div className="col-span-3">
+            <div className={`col-span-3 ${bar ? 'lg:col-span-3' : ''}`}>
               <label className={cap} htmlFor="heroCar">Vehicle</label>
               <select id="heroCar" name="car" value={car}
                       onChange={(e) => setCar(e.target.value)}
@@ -155,8 +192,8 @@ export function HeroEnquiry({ title, note }: { title: string; note: string }) {
           ) : null}
         </div>
 
-        <div className="grid grid-cols-2 gap-2 sm:gap-2.5">
-          <div>
+        <div className={`grid grid-cols-2 gap-2 sm:gap-2.5 ${bar ? 'lg:contents' : ''}`}>
+          <div className={bar ? 'lg:col-span-2' : ''}>
             <label className={cap} id="heroStartLabel" htmlFor="heroStart">Pick up</label>
             <DatePick
               id="heroStart"
@@ -173,7 +210,7 @@ export function HeroEnquiry({ title, note }: { title: string; note: string }) {
               }}
             />
           </div>
-          <div>
+          <div className={bar ? 'lg:col-span-2' : ''}>
             <label className={cap} id="heroReturnLabel" htmlFor="heroReturn">Return</label>
             {/* Never before the pickup: the calendar will not offer it, so a
                 wrong pair cannot be sent and then argued about on the phone. */}
@@ -196,7 +233,7 @@ export function HeroEnquiry({ title, note }: { title: string; note: string }) {
                aria-hidden="true" className="hidden" />
 
         {status.kind === 'error' ? (
-          <p role="alert" className="rounded-lg bg-danger/10 px-3 py-2 text-[13px] text-danger">
+          <p role="alert" className={`rounded-lg bg-danger/10 px-3 py-2 text-[13px] text-danger ${bar ? 'lg:col-span-12' : ''}`}>
             {status.message}
           </p>
         ) : null}
@@ -207,10 +244,16 @@ export function HeroEnquiry({ title, note }: { title: string; note: string }) {
             WhatsApp on the left, in its own green, because for a lot of
             people it is the only one they would use -- and the form's own
             button on the right, where the thumb ends up. */}
-        <div className="mt-0.5 grid grid-cols-2 gap-2">
+        <div
+          className={`mt-0.5 grid grid-cols-2 gap-2 ${
+            bar ? 'lg:col-span-12 lg:mt-0 lg:flex lg:justify-end' : ''
+          }`}
+        >
           <WhatsAppButton
             message="Hello, I would like to check availability for a self-drive vehicle."
-            className="w-full rounded-lg px-2 py-2.5 text-[13px] whitespace-nowrap sm:text-[14px]"
+            className={`w-full rounded-lg px-2 py-2.5 text-[13px] whitespace-nowrap sm:text-[14px] ${
+              bar ? 'lg:w-auto lg:px-7' : ''
+            }`}
           >
             WhatsApp
           </WhatsAppButton>
@@ -218,7 +261,9 @@ export function HeroEnquiry({ title, note }: { title: string; note: string }) {
           <button
             type="submit"
             disabled={sending}
-            className="w-full rounded-lg bg-navy px-2 py-2.5 text-[13px] font-semibold whitespace-nowrap text-white transition hover:bg-navy-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy disabled:opacity-60 sm:text-[14px]"
+            className={`w-full rounded-lg bg-navy px-2 py-2.5 text-[13px] font-semibold whitespace-nowrap text-white transition hover:bg-navy-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy disabled:opacity-60 sm:text-[14px] ${
+              bar ? 'lg:w-auto lg:px-7' : ''
+            }`}
           >
             {sending ? 'Sending…' : 'Check availability'}
           </button>
@@ -227,7 +272,11 @@ export function HeroEnquiry({ title, note }: { title: string; note: string }) {
         {/* On a phone this said the same thing as the line under the heading,
             twice, in a card fighting for the first screen. The one kept is the
             one the owner can edit; this is the one written into the code. */}
-        <p className="hidden text-center text-[11px] leading-snug text-ink-faint sm:block">
+        <p
+          className={`hidden text-center text-[11px] leading-snug text-ink-faint sm:block ${
+            bar ? 'lg:col-span-12 lg:text-right' : ''
+          }`}
+        >
           No payment now. We call you back to confirm.
         </p>
       </form>

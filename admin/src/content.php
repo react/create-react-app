@@ -62,6 +62,14 @@ function content_schema(): array
                             'fields' => [
                                 'figure' => ['label' => 'Figure', 'type' => 'text'],
                                 'label'  => ['label' => 'What it counts', 'type' => 'text'],
+                                // The drawing beside the figure. A name that
+                                // matches none of these draws a plain dot, so
+                                // a typo is a bullet rather than a gap.
+                                'icon'   => [
+                                    'label' => 'Icon',
+                                    'type'  => 'text',
+                                    'hint'  => 'One of: users, car, bike, pin, support, clock, shield, star, calendar, wallet, key, road. Leave empty for a plain dot.',
+                                ],
                             ],
                         ],
                         // The short enquiry card beside the heading. Four
@@ -83,6 +91,11 @@ function content_schema(): array
                                 'title'  => ['label' => 'Title', 'type' => 'text'],
                                 'body'   => ['label' => 'Description', 'type' => 'textarea'],
                                 'to'     => ['label' => 'Links to', 'type' => 'text'],
+                                'icon'   => [
+                                    'label' => 'Icon',
+                                    'type'  => 'text',
+                                    'hint'  => 'One of: car, bike, star, users, calendar, pin, key, wallet, shield, clock, support, road. Leave empty for a plain dot.',
+                                ],
                                 // Shown as ticks on /services, where all six
                                 // are laid out in full. The home page and the
                                 // footer read the title and the description
@@ -103,15 +116,42 @@ function content_schema(): array
                         'heading' => ['label' => 'Heading', 'type' => 'text'],
                         'intro'   => ['label' => 'Intro paragraph', 'type' => 'textarea'],
                         'items'   => [
-                            'label'  => 'Accordion entries',
+                            'label'  => 'Reasons',
+                            'note'   => 'Three works best. Each one is a card on the home page, read at a glance rather than opened.',
                             'type'   => 'repeater',
                             'fields' => [
-                                'title' => ['label' => 'Question', 'type' => 'text'],
-                                'body'  => ['label' => 'Answer', 'type' => 'textarea'],
+                                'title' => ['label' => 'The reason, in a few words', 'type' => 'text'],
+                                'body'  => ['label' => 'Say it properly', 'type' => 'textarea'],
+                                'icon'  => [
+                                    'label' => 'Icon',
+                                    'type'  => 'text',
+                                    'hint'  => 'One of: wallet, pin, key, shield, clock, star, users, car, bike, support, calendar, road. Leave empty for a plain dot.',
+                                ],
                             ],
                         ],
                     ],
                 ],
+                'reviews' => [
+                    'label'  => 'What customers say',
+                    'note'   => 'Empty to start with, and the column does not appear on the home page until '
+                        . 'you add one -- there is no made-up review shipped with the site. Paste in what '
+                        . 'people actually wrote: a Google review, or a message somebody sent on WhatsApp. '
+                        . 'Use the name they posted under. Four to eight reads best.',
+                    'fields' => [
+                        'heading' => ['label' => 'Heading', 'type' => 'text'],
+                        'items'   => [
+                            'label'  => 'Reviews',
+                            'type'   => 'repeater',
+                            'fields' => [
+                                'name'   => ['label' => 'Who wrote it', 'type' => 'text'],
+                                'rating' => ['label' => 'Stars', 'type' => 'text', 'hint' => '1 to 5. Leave empty for no stars.'],
+                                'text'   => ['label' => 'What they said', 'type' => 'textarea'],
+                                'place'  => ['label' => 'Where they are from', 'type' => 'text', 'hint' => 'Optional, such as "Nagercoil".'],
+                            ],
+                        ],
+                    ],
+                ],
+
                 'chooser' => [
                     'label'  => 'What are you looking for',
                     'note'   => 'The row of choices under the hero. Each one goes somewhere that answers it.',
@@ -121,9 +161,47 @@ function content_schema(): array
                             'label'  => 'Choices',
                             'type'   => 'repeater',
                             'fields' => [
-                                'label' => ['label' => 'Label', 'type' => 'text'],
-                                'note'  => ['label' => 'Line under it', 'type' => 'text'],
-                                'href'  => ['label' => 'Link', 'type' => 'text'],
+                                'label'  => ['label' => 'Label', 'type' => 'text'],
+                                'note'   => ['label' => 'Line under it', 'type' => 'text'],
+                                'href'   => ['label' => 'Link', 'type' => 'text'],
+                                // A photograph uploaded against this tile in
+                                // Pictures wins over both of these. They are
+                                // what the tile shows until there is one.
+                                'art'    => [
+                                    'label' => 'Drawing',
+                                    'type'  => 'text',
+                                    'hint'  => 'car or scooter. Leave empty for no drawing. A photograph uploaded for this tile under Pictures is used instead.',
+                                ],
+                                'ribbon' => [
+                                    'label' => 'Corner ribbon',
+                                    'type'  => 'text',
+                                    'hint'  => 'Two or three words across the corner, such as "Better rate". Leave empty for none.',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+
+                'offers' => [
+                    'label'  => 'Offers',
+                    'note'   => 'The band of offers on the home page. It is empty to start with and the band '
+                        . 'does not appear at all until you add one, so there is nothing here promising a '
+                        . 'discount you have not agreed to. Delete the rows when a festival is over and the '
+                        . 'band disappears again. A picture can be uploaded for each one under Pictures; '
+                        . 'without one the card is the words on the brand colours, which reads perfectly well.',
+                    'fields' => [
+                        'eyebrow' => ['label' => 'Small line above', 'type' => 'text'],
+                        'heading' => ['label' => 'Heading', 'type' => 'text'],
+                        'items'   => [
+                            'label'  => 'Offers',
+                            'type'   => 'repeater',
+                            'fields' => [
+                                'badge' => ['label' => 'Corner label', 'type' => 'text', 'hint' => 'Two or three words, such as "First booking". Optional.'],
+                                'title' => ['label' => 'The offer', 'type' => 'text', 'hint' => 'What they get, in a few words: "10% off your first booking".'],
+                                'note'  => ['label' => 'Line under it', 'type' => 'textarea'],
+                                'code'  => ['label' => 'Code', 'type' => 'text', 'hint' => 'The word they quote, if there is one. Optional.'],
+                                'terms' => ['label' => 'Small print', 'type' => 'text', 'hint' => 'Dates it runs between, or what it does not cover. Optional but worth filling in.'],
+                                'href'  => ['label' => 'Link', 'type' => 'text', 'hint' => 'Where the card goes when tapped, such as /tariff. Leave empty and it is not a link.'],
                             ],
                         ],
                     ],
@@ -169,6 +247,14 @@ function content_schema(): array
                             'fields' => [
                                 'question' => ['label' => 'Question', 'type' => 'text'],
                                 'answer'   => ['label' => 'Answer', 'type' => 'textarea'],
+                                'category' => [
+                                    'label' => 'Group',
+                                    'type'  => 'text',
+                                    'hint'  => 'One or two words, such as Deposit, Documents, Booking. Questions sharing a '
+                                        . 'group get a button above the list that shows just those. Spell it the same way '
+                                        . 'every time or you get two buttons. Leave empty and the question only shows '
+                                        . 'under "All".',
+                                ],
                             ],
                         ],
                     ],

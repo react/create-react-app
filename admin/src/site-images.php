@@ -40,8 +40,32 @@ const SITE_IMAGE_SLOTS = [
 
     // The home page, top to bottom.
     'home-hero'     => 'Home page background',
-    'why-us-1'      => 'Why hire from us — large photo',
-    'why-us-2'      => 'Why hire from us — small photo',
+
+    // The four tiles in the "What are you looking for?" card in the banner,
+    // in the order they are listed under Website content. A tile with no
+    // picture keeps its drawing, so these can be filled in one at a time.
+    'chooser-1'     => 'Banner tile 1 — picture',
+    'chooser-2'     => 'Banner tile 2 — picture',
+    'chooser-3'     => 'Banner tile 3 — picture',
+    'chooser-4'     => 'Banner tile 4 — picture',
+
+    // The offer cards, in the order they are listed under Website content.
+    // An offer with no picture is the words on the brand colours, which is a
+    // finished card -- so these can be filled in one at a time or not at all.
+    'offer-1'       => 'Offer 1 — picture',
+    'offer-2'       => 'Offer 2 — picture',
+    'offer-3'       => 'Offer 3 — picture',
+    'offer-4'       => 'Offer 4 — picture',
+
+    // The collage beside "why hire from us". However many are uploaded is
+    // how many the collage shows, so this grows one photograph at a time
+    // rather than needing all six before any of them appear.
+    'why-us-1'      => 'Why hire from us — photo 1',
+    'why-us-2'      => 'Why hire from us — photo 2',
+    'why-us-3'      => 'Why hire from us — photo 3',
+    'why-us-4'      => 'Why hire from us — photo 4',
+    'why-us-5'      => 'Why hire from us — photo 5',
+    'why-us-6'      => 'Why hire from us — photo 6',
 
     // Behind the questions band, which stands on the home page and on the
     // tariff page. It had no slot and quietly borrowed the home page's
@@ -111,9 +135,30 @@ const SITE_IMAGE_SHAPES = [
     // is ever read; it is there to stop the band being a flat colour.
     'faq'       => [16, 7, 1400, 613],
 
-    // The photographs beside "Why hire from us" are laid out 4:3.
-    'why-us-1' => [4, 3, 1200, 900],
-    'why-us-2' => [4, 3, 1200, 900],
+    // The banner tiles show their picture in the right-hand half, faded out
+    // towards the words. Small, because that is all any of them is ever
+    // drawn at -- a tile is about 200 points wide on a laptop.
+    'chooser-1' => [4, 3, 600, 450],
+    'chooser-2' => [4, 3, 600, 450],
+    'chooser-3' => [4, 3, 600, 450],
+    'chooser-4' => [4, 3, 600, 450],
+
+    // An offer card is a wide landscape tile, read at about 380 points.
+    'offer-1' => [16, 10, 800, 500],
+    'offer-2' => [16, 10, 800, 500],
+    'offer-3' => [16, 10, 800, 500],
+    'offer-4' => [16, 10, 800, 500],
+
+    // The collage frames stand taller than they are wide, and each one is
+    // drawn at about 200 points, so they are saved small: six photographs
+    // at banner size on one page is most of a megabyte for a column of
+    // thumbnails.
+    'why-us-1' => [4, 5, 700, 875],
+    'why-us-2' => [4, 5, 700, 875],
+    'why-us-3' => [4, 5, 700, 875],
+    'why-us-4' => [4, 5, 700, 875],
+    'why-us-5' => [4, 5, 700, 875],
+    'why-us-6' => [4, 5, 700, 875],
 
     // The one between the steps stands taller than it is wide. 4:5 rather
     // than anything narrower: the photographs already uploaded here are
@@ -153,8 +198,23 @@ const SITE_IMAGE_KEYWORDS = [
     'services-hero' => 'vehicle hire services Kanyakumari district',
 
     'home-hero' => 'self drive car and bike rental Kanyakumari district',
+
+    'chooser-1' => 'daily self drive car rental Nagercoil',
+    'chooser-2' => 'weekly self drive car hire Kanyakumari',
+    'chooser-3' => 'monthly car rental Nagercoil',
+    'chooser-4' => 'scooter and bike rental Kanyakumari',
+
+    'offer-1'   => 'self drive car rental offer Nagercoil',
+    'offer-2'   => 'self drive car rental offer Kanyakumari',
+    'offer-3'   => 'car and bike hire discount Nagercoil',
+    'offer-4'   => 'car and bike hire discount Kanyakumari',
+
     'why-us-1'  => 'why hire from NiteSha Cars Nagercoil',
     'why-us-2'  => 'self drive car handover Nagercoil',
+    'why-us-3'  => 'self drive rental fleet Kanyakumari district',
+    'why-us-4'  => 'NiteSha Cars and Bikes team Nagercoil',
+    'why-us-5'  => 'self drive car delivered Kanyakumari',
+    'why-us-6'  => 'rental car on the road Kanyakumari district',
     'coast'     => 'car rental delivery areas Kanyakumari district',
     'faq'       => 'self drive car rental questions Kanyakumari',
 

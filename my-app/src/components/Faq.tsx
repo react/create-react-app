@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import type { SyntheticEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { useHome, useSiteImage } from '../content';
@@ -93,7 +93,7 @@ function Item({
   );
 }
 
-export type FaqItem = { question: string; answer: string };
+export type FaqItem = { question: string; answer: string; category?: string };
 
 export function Faq({
   /** How many to show. Everything, unless a page says otherwise. */
@@ -177,10 +177,27 @@ export function Faq({
     ? undefined
     : [800, 1280].map((w) => `${BAKED.replace('.webp', `-${w}w.avif`)} ${w}w`).join(', ');
 
+  // "All" to begin with, which is what the prerendered HTML holds: every
+  // question and every answer in the markup, which is what a crawler reads
+  // and what the FAQPage data on this page is built from. The chips filter
+  // what a person is looking at, not what is published.
+  const [group, setGroup] = useState<string>('');
+
   if (all.length === 0) return null;
 
   const items = limit === undefined ? all : all.slice(0, limit);
   const rest = all.length - items.length;
+
+  // The groups actually present, in the order the questions are listed, so
+  // the owner controls the order of the buttons by the order of the rows.
+  // One group is not a filter, it is a label -- no buttons for that.
+  const groups: string[] = [];
+  for (const item of items) {
+    const name = item.category?.trim();
+    if (name && !groups.includes(name)) groups.push(name);
+  }
+  const chips = groups.length > 1 ? groups : [];
+  const shown = group === '' ? items : items.filter((i) => i.category?.trim() === group);
 
   // One open at a time, which is what the shared name does in Chrome 120,
   // Safari 17.2 and Firefox 130 and later. Older browsers ignore the
@@ -213,70 +230,89 @@ export function Faq({
       </picture>
       <div aria-hidden="true" className="faq-wash absolute inset-0 -z-10" />
 
-      <div className="mx-auto max-w-[86rem] px-5 sm:px-8 lg:px-12">
-        <Reveal className="mx-auto max-w-2xl text-center">
+      <div className="mx-auto grid max-w-[86rem] gap-9 px-5 sm:px-8 lg:grid-cols-[minmax(0,0.78fr)_minmax(0,1.22fr)] lg:gap-14 lg:px-12">
+        {/* The heading on one side and the questions on the other, rather
+            than a centred heading over two columns of cards. Two columns of
+            accordions is the layout that put half the questions where the
+            eye does not go; one column reads straight down, and the space
+            that frees is where the group buttons live. */}
+        <Reveal className="lg:pt-2">
           {title ? (
             <h2 className="text-[1.6rem] font-bold tracking-tight sm:text-[2.1rem]">
               {title}
             </h2>
           ) : null}
           {blurb ? (
-            <p className="mx-auto mt-3 max-w-xl text-[15px] leading-relaxed text-white/75">
+            <p className="mt-3 max-w-md text-[15px] leading-relaxed text-white/75">
               {blurb}
             </p>
           ) : null}
-        </Reveal>
 
-        {/* Two columns from the tablet up.
-
-            Two stacks rather than a two-column grid, which matters the moment
-            an answer opens: in a grid the row grows to the taller of the pair
-            and the card beside it is left sitting over a hole the size of the
-            answer. Each stack closes up on its own.
-
-            Split in half rather than by odd and even, because on a phone the
-            two stacks become one and its order is the order of the markup.
-            Halves keep the questions in the order the panel lists them --
-            deposit, documents, kilometres -- which is the order they are
-            asked in. */}
-        <div
-          ref={list}
-          className="mt-7 grid gap-2.5 sm:mt-9 sm:grid-cols-2 sm:gap-3"
-        >
-          {[
-            items.slice(0, Math.ceil(items.length / 2)),
-            items.slice(Math.ceil(items.length / 2)),
-          ].map((column, side) => (
-            <div key={side} className="flex flex-col gap-2.5 sm:gap-3">
-              {column.map((item, i) => (
-                <Item
-                  key={item.question}
-                  question={item.question}
-                  answer={item.answer}
-                  delay={Math.min(i, 5) * 60}
-                  onToggle={closeTheRest}
-                />
+          {chips.length > 0 ? (
+            <div className="mt-6 flex flex-wrap gap-2" role="group" aria-label="Filter the questions">
+              <button
+                type="button"
+                onClick={() => setGroup('')}
+                aria-pressed={group === ''}
+                className="faq-chip"
+              >
+                All
+              </button>
+              {chips.map((name) => (
+                <button
+                  key={name}
+                  type="button"
+                  onClick={() => setGroup(name)}
+                  aria-pressed={group === name}
+                  className="faq-chip"
+                >
+                  {name}
+                </button>
               ))}
             </div>
-          ))}
-        </div>
+          ) : null}
 
-        {/* Only when there are some, and only when the page has somewhere to
-            send them. A link saying "and four more" that goes nowhere is
-            worse than not mentioning them. */}
-        {rest > 0 && moreHref ? (
-          <Reveal className="mt-7 text-center">
+          {/* Only when there are some, and only when the page has somewhere
+              to send them. A link saying "and four more" that goes nowhere
+              is worse than not mentioning them. */}
+          {rest > 0 && moreHref ? (
             <Link
               to={moreHref}
-              className="group inline-flex items-center gap-2 rounded-xl border border-gold/40 px-5 py-2.5 text-[15px] font-semibold text-gold-light transition hover:bg-gold/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+              className="group mt-7 hidden items-center gap-2 rounded-xl border border-gold/40 px-5 py-2.5 text-[15px] font-semibold text-gold-light transition hover:bg-gold/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold lg:inline-flex"
             >
               {moreLabel ?? `${rest} more question${rest === 1 ? '' : 's'}`}
               <span aria-hidden="true" className="transition group-hover:translate-x-1">
                 →
               </span>
             </Link>
-          </Reveal>
-        ) : null}
+          ) : null}
+        </Reveal>
+
+        <div ref={list} className="flex flex-col gap-2.5 sm:gap-3">
+          {shown.map((item, i) => (
+            <Item
+              key={item.question}
+              question={item.question}
+              answer={item.answer}
+              delay={Math.min(i, 5) * 60}
+              onToggle={closeTheRest}
+            />
+          ))}
+
+          {/* The same link again for a phone, where the column above it is
+              the heading and nothing would follow the questions at all. */}
+          {rest > 0 && moreHref ? (
+            <Link
+              to={moreHref}
+              className="group mt-4 inline-flex items-center justify-center gap-2 rounded-xl border border-gold/40 px-5 py-2.5 text-[15px] font-semibold text-gold-light transition hover:bg-gold/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold lg:hidden"
+            >
+              {moreLabel ?? `${rest} more question${rest === 1 ? '' : 's'}`}
+              <span aria-hidden="true" className="transition group-hover:translate-x-1">
+                →
+              </span>
+            </Link>
+          ) : null}
+        </div>
       </div>
     </section>
   );

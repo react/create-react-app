@@ -159,3 +159,17 @@ export function useSiteImage(slot: string): string | undefined {
 /** The copy as it stood at build time. For anything outside a component. */
 export const content = live;
 export const home = live.home;
+
+/**
+ * The same lookup, for a list whose length is not fixed.
+ *
+ * useSiteImage is a hook, so a component that calls it once per item in a
+ * panel-edited list calls a different number of hooks the moment the panel
+ * answers with one more item than the build had -- and React throws on that
+ * render rather than on the one that added the item. One hook and a closure
+ * over the result has no such edge.
+ */
+export function useSiteImageLookup(): (slot: string) => string | undefined {
+  const images = useBrand();
+  return (slot) => images[slot] ?? photoFor(slot);
+}

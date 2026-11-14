@@ -21,15 +21,18 @@
       "stats": [
         {
           "figure": "1000+",
-          "label": "customers"
+          "label": "customers",
+          "icon": "users"
         },
         {
           "figure": "20+",
-          "label": "cars and bikes"
+          "label": "cars and bikes",
+          "icon": "car"
         },
         {
           "figure": "20",
-          "label": "towns we deliver to"
+          "label": "towns we deliver to",
+          "icon": "pin"
         }
       ]
     },
@@ -37,35 +40,49 @@
       "heading": "What are you looking for?",
       "items": [
         {
-          "label": "A car for a day or two",
-          "note": "Our daily rate, on every car",
-          "href": "/tariff"
+          "label": "Daily rentals",
+          "note": "A car for a day or two",
+          "href": "/tariff",
+          "art": "car",
+          "ribbon": ""
         },
         {
-          "label": "A week or more",
+          "label": "7 days+",
           "note": "The daily rate comes down",
-          "href": "/tariff"
+          "href": "/tariff",
+          "art": "",
+          "ribbon": "Better rate"
         },
         {
-          "label": "A month or more",
+          "label": "30 days+",
           "note": "Our lowest daily rate",
-          "href": "/services#monthly"
+          "href": "/services#monthly",
+          "art": "car",
+          "ribbon": ""
         },
         {
-          "label": "A bike or scooter",
-          "note": "By the hour, the day or the week",
-          "href": "/services#bikes"
+          "label": "Bikes & scooters",
+          "note": "By the hour, day or week",
+          "href": "/services#bikes",
+          "art": "scooter",
+          "ribbon": ""
         }
       ]
+    },
+    "offers": {
+      "eyebrow": "Deals",
+      "heading": "Offers on right now",
+      "items": []
     },
     "services": {
       "eyebrow": "Our Services",
       "heading": "Rental cars, bikes and more",
       "items": [
         {
-          "to": "/cars",
           "title": "Self drive cars",
           "body": "Hatchbacks, sedans and SUVs by the day, week or month. You drive.",
+          "to": "/cars",
+          "icon": "car",
           "points": [
             "Hatchbacks, sedans, SUVs and 7 seaters",
             "By the day, the week or the month",
@@ -74,9 +91,10 @@
           ]
         },
         {
-          "to": "/bikes",
           "title": "Bike rental",
           "body": "Scooters and motorcycles by the hour, day or week. Helmets included.",
+          "to": "/bikes",
+          "icon": "bike",
           "points": [
             "Scooters and motorcycles",
             "By the hour, the day or the week",
@@ -85,9 +103,10 @@
           ]
         },
         {
-          "to": "/wedding-cars",
           "title": "Wedding cars",
           "body": "Decorated cars reserved for your date, and vehicles for the family.",
+          "to": "/wedding-cars",
+          "icon": "star",
           "points": [
             "Decorated to your colours",
             "Held for your date once it is fixed",
@@ -96,9 +115,10 @@
           ]
         },
         {
-          "to": "/tourist-vehicles",
           "title": "Tourist vehicles",
           "body": "Cars and vans with a driver who knows the district and its roads.",
+          "to": "/tourist-vehicles",
+          "icon": "users",
           "points": [
             "A driver who knows the district",
             "Sized for a family or a group",
@@ -107,9 +127,10 @@
           ]
         },
         {
-          "to": "/monthly",
           "title": "Monthly rental",
           "body": "Weeks rather than days, at a rate that drops the longer you keep it.",
+          "to": "/monthly",
+          "icon": "calendar",
           "points": [
             "Weeks rather than days",
             "The daily rate falls the longer you keep it",
@@ -118,9 +139,10 @@
           ]
         },
         {
-          "to": "/nri",
           "title": "Coming from abroad?",
           "body": "Book before you land. Airport pickup and long-stay rates for visiting families.",
+          "to": "/nri",
+          "icon": "pin",
           "points": [
             "Booked before you land",
             "Airport and station pickup",
@@ -137,17 +159,24 @@
       "items": [
         {
           "title": "The price you agree is the price you pay",
-          "body": "Every vehicle carries three numbers before you take it: the daily rate, the kilometres included each day, and what anything beyond that costs. The deposit is stated too, and it comes back when the car does. Nothing is discovered at the end."
+          "body": "Every vehicle carries three numbers before you take it: the daily rate, the kilometres included each day, and what anything beyond that costs. The deposit is stated too, and it comes back when the car does. Nothing is discovered at the end.",
+          "icon": "wallet"
         },
         {
           "title": "Anywhere in the district",
-          "body": "We work across the whole of Kanyakumari district — Nagercoil, Marthandam, Colachel, Thuckalay and the towns between. Tell us where you are and we will sort out getting the vehicle to you, including the airport if you are flying in."
+          "body": "We work across the whole of Kanyakumari district — Nagercoil, Marthandam, Colachel, Thuckalay and the towns between. Tell us where you are and we will sort out getting the vehicle to you, including the airport if you are flying in.",
+          "icon": "pin"
         },
         {
           "title": "One place for the whole trip",
-          "body": "A self drive car for the week, a bike for running about, a decorated car for the wedding, and a driver for the day everyone goes sightseeing. Booked together, with one person to call rather than four."
+          "body": "A self drive car for the week, a bike for running about, a decorated car for the wedding, and a driver for the day everyone goes sightseeing. Booked together, with one person to call rather than four.",
+          "icon": "key"
         }
       ]
+    },
+    "reviews": {
+      "heading": "What customers say",
+      "items": []
     },
     "howItWorks": {
       "heading": "How it works",
@@ -189,43 +218,53 @@
       "items": [
         {
           "question": "Do I need a deposit to take a self drive car?",
-          "answer": "Yes, a refundable security deposit, and you get it back when the vehicle comes back in the same condition. The amount depends on the vehicle and we tell you the figure before you book, not when you arrive."
+          "answer": "Yes, a refundable security deposit, and you get it back when the vehicle comes back in the same condition. The amount depends on the vehicle and we tell you the figure before you book, not when you arrive.",
+          "category": "Deposit"
         },
         {
           "question": "What documents do I need to rent a car without a driver?",
-          "answer": "Your original driving licence and one photo ID. We take a copy at handover. For visitors from abroad, bring your passport and an international driving permit alongside your home licence."
+          "answer": "Your original driving licence and one photo ID. We take a copy at handover. For visitors from abroad, bring your passport and an international driving permit alongside your home licence.",
+          "category": "Documents"
         },
         {
           "question": "Is there a kilometre limit, and what happens if I go over it?",
-          "answer": "Every vehicle comes with a daily kilometre allowance, and anything beyond it is charged at a fixed rate per kilometre. Both numbers are on the tariff page and on your booking, so there is nothing to work out afterwards."
+          "answer": "Every vehicle comes with a daily kilometre allowance, and anything beyond it is charged at a fixed rate per kilometre. Both numbers are on the tariff page and on your booking, so there is nothing to work out afterwards.",
+          "category": "Kilometres"
         },
         {
           "question": "Can you deliver the car to Nagercoil railway station or the airport?",
-          "answer": "We deliver and collect across Kanyakumari district — Nagercoil, Kanyakumari, Marthandam, Colachel, Thuckalay and the towns around them — including the railway station and the bus stand. Tell us where you land and when, and we will say what we can do."
+          "answer": "We deliver and collect across Kanyakumari district — Nagercoil, Kanyakumari, Marthandam, Colachel, Thuckalay and the towns around them — including the railway station and the bus stand. Tell us where you land and when, and we will say what we can do.",
+          "category": "Delivery"
         },
         {
           "question": "Can I take the car into Kerala?",
-          "answer": "Usually yes — Trivandrum is an hour away and a lot of our rentals cross the border. Tell us where you are going when you book, so the paperwork is right before you set off."
+          "answer": "Usually yes — Trivandrum is an hour away and a lot of our rentals cross the border. Tell us where you are going when you book, so the paperwork is right before you set off.",
+          "category": "On the road"
         },
         {
           "question": "Do you rent two-wheelers as well as cars?",
-          "answer": "Yes. Scooters and motorcycles by the hour, the day or the week, on the same terms as the cars. A two-wheeler is the easier way around Nagercoil and out to the coast."
+          "answer": "Yes. Scooters and motorcycles by the hour, the day or the week, on the same terms as the cars. A two-wheeler is the easier way around Nagercoil and out to the coast.",
+          "category": "Bikes"
         },
         {
           "question": "Is a monthly rental cheaper than paying by the day?",
-          "answer": "Considerably. Weekly, fortnightly and monthly rates all bring the daily figure down, which is what most people on a work posting or a long stay take. Ask us for a monthly quote with the kilometres you expect to drive."
+          "answer": "Considerably. Weekly, fortnightly and monthly rates all bring the daily figure down, which is what most people on a work posting or a long stay take. Ask us for a monthly quote with the kilometres you expect to drive.",
+          "category": "Rates"
         },
         {
           "question": "Do you provide a car with a driver for sightseeing?",
-          "answer": "Yes. Tourist vehicles come with a driver who knows the district, for Kanyakumari, Padmanabhapuram Palace, the temples and the beaches, by the day or for a full itinerary."
+          "answer": "Yes. Tourist vehicles come with a driver who knows the district, for Kanyakumari, Padmanabhapuram Palace, the temples and the beaches, by the day or for a full itinerary.",
+          "category": "With a driver"
         },
         {
           "question": "How early should a wedding car be booked?",
-          "answer": "As early as you can in the wedding season. Decorated cars and the premium vehicles go first, and the dates everybody wants are the ones that run out."
+          "answer": "As early as you can in the wedding season. Decorated cars and the premium vehicles go first, and the dates everybody wants are the ones that run out.",
+          "category": "Booking"
         },
         {
           "question": "How do I book?",
-          "answer": "Send the dates through the form on this site or on WhatsApp, and we call you back to confirm what is free. Nothing is paid online — the deposit and the rental are settled when you take the vehicle."
+          "answer": "Send the dates through the form on this site or on WhatsApp, and we call you back to confirm what is free. Nothing is paid online — the deposit and the rental are settled when you take the vehicle.",
+          "category": "Booking"
         }
       ]
     },

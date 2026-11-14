@@ -1,6 +1,7 @@
 import { useHome, useSiteImage } from '../content';
 import { ContentLink } from './ContentLink';
-import { HeroEnquiry } from './HeroEnquiry';
+import { Chooser } from './Chooser';
+import { Icon } from './Icon';
 
 export function Hero() {
   const home = useHome();
@@ -97,7 +98,7 @@ export function Hero() {
             it. On a desktop the points return to under the words, where the
             card has room beside both. */}
         <div className="grid items-start gap-8 lg:grid-cols-12 lg:gap-x-12 lg:gap-y-9">
-          <div className="lg:col-span-7 lg:col-start-1 lg:row-start-1 xl:col-span-8">
+          <div className="lg:col-span-7 lg:col-start-1 lg:row-start-1">
             <p data-hero-item="" style={{ ['--hero-delay' as string]: '40ms' }} className="eyebrow-gold mb-4 inline-flex items-center gap-2 rounded-full border border-gold/35 bg-gold/10 px-3.5 py-1.5 text-[11px]">
               {h.eyebrow}
             </p>
@@ -124,21 +125,29 @@ export function Hero() {
                 a figure in a component is a figure nobody can correct
                 without a deploy, and these are the ones that go stale. */}
             {stats.length > 0 ? (
-              <dl data-hero-item="" style={{ ['--hero-delay' as string]: '300ms' }} className="mt-6 flex flex-wrap gap-x-8 gap-y-4">
+              <ul data-hero-item="" style={{ ['--hero-delay' as string]: '300ms' }} className="hero-stats mt-6 flex flex-wrap items-center gap-x-5 gap-y-4 sm:gap-x-6">
                 {stats.map((s) => (
-                  <div key={s.label}>
-                    <dt className="sr-only">{s.label}</dt>
-                    <dd>
-                      <span className="block text-2xl leading-none font-bold text-gold sm:text-[1.75rem]">
+                  <li key={s.label} className="hero-stat flex items-center gap-2.5">
+                    {/* The icon names a drawing; an unknown one is a dot
+                        rather than a gap, so a typo in the panel cannot
+                        leave a hole in the row. */}
+                    <span
+                      aria-hidden="true"
+                      className="grid size-10 shrink-0 place-items-center rounded-full border border-gold/35 bg-gold/10 text-gold-light sm:size-11"
+                    >
+                      <Icon name={s.icon} size={20} />
+                    </span>
+                    <span>
+                      <span className="block text-xl leading-none font-bold text-white sm:text-2xl">
                         {s.figure}
                       </span>
-                      <span className="mt-1 block text-[12.5px] font-semibold tracking-wide text-white/70 uppercase">
+                      <span className="mt-1 block text-[12px] leading-tight font-medium text-white/65 sm:text-[12.5px]">
                         {s.label}
                       </span>
-                    </dd>
-                  </div>
+                    </span>
+                  </li>
                 ))}
-              </dl>
+              </ul>
             ) : null}
 
             <div data-hero-item="" style={{ ['--hero-delay' as string]: '340ms' }} className="mt-7 grid grid-cols-1 gap-3 min-[380px]:grid-cols-2 sm:flex sm:flex-wrap">
@@ -160,12 +169,15 @@ export function Hero() {
 
           {/* Second on a phone, beside the words on a desktop. It spans both
               rows there so the points can sit under the heading without
-              leaving a hole next to them. */}
-          <div data-hero-item="" style={{ ['--hero-delay' as string]: '300ms' }} className="lg:col-span-5 lg:col-start-8 lg:row-span-2 lg:row-start-1 xl:col-span-4 xl:col-start-9">
-            <HeroEnquiry
-              title={h.formTitle ?? 'Check a date'}
-              note={h.formNote ?? 'Tell us when you need it and we will call you back.'}
-            />
+              leaving a hole next to them.
+
+              The enquiry form used to hold this corner. It is a bar under
+              the banner now: a chooser and a form in the same corner are two
+              things asking at once, and of the two it is the chooser that
+              answers the question somebody arrives with. The form is wider
+              down there and still above the fold on a laptop. */}
+          <div data-hero-item="" style={{ ['--hero-delay' as string]: '300ms' }} className="lg:col-span-5 lg:col-start-8 lg:row-span-2 lg:row-start-1">
+            <Chooser />
           </div>
 
           {/* Three promises, as badges rather than as a bulleted row.
@@ -175,7 +187,7 @@ export function Hero() {
               they are not read. A badge is read, because there is nothing in
               it to skip: a tick and two or three words. The words are still
               the panel's. */}
-          <ul data-hero-item="" style={{ ['--hero-delay' as string]: '420ms' }} className="flex flex-wrap gap-2.5 lg:col-span-7 lg:col-start-1 lg:row-start-2 xl:col-span-8">
+          <ul data-hero-item="" style={{ ['--hero-delay' as string]: '420ms' }} className="flex flex-wrap gap-2.5 lg:col-span-7 lg:col-start-1 lg:row-start-2">
             {h.points.map((p) => (
               <li key={p} className="hero-chip inline-flex items-center gap-2 rounded-full border border-gold/30 bg-white/[0.08] py-2 pr-4 pl-2.5 text-[13px] font-semibold text-white sm:text-sm">
                 <span aria-hidden="true" className="hero-chip-tick grid size-5 shrink-0 place-items-center rounded-full bg-gold/20 text-gold-light">

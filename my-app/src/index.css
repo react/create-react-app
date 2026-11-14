@@ -2312,3 +2312,362 @@ body {
     content: none;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   The chooser card in the banner
+
+   Four ways in, where the reference site puts them: in the banner, as the
+   first thing after the headline. Every tile is a destination rather than a
+   heading, which is why each one carries an arrow -- a grid of labels with
+   nothing moving under the pointer reads as a list of facts.
+--------------------------------------------------------------------------- */
+
+.chooser-card {
+  border: 1px solid rgba(212, 175, 55, 0.22);
+}
+
+.chooser-tile {
+  /* Tall enough that a one-line label with a two-line note still leaves the
+     arrow its row, so a pair of tiles matches whichever of them wraps. */
+  min-height: 112px;
+}
+
+.chooser-tile-lead {
+  /* The glow sits behind the drawing rather than behind the words, so the
+     label keeps its contrast on navy while the corner still lifts. */
+  background:
+    radial-gradient(120% 150% at 86% 16%, rgba(212, 175, 55, 0.32), transparent 62%),
+    linear-gradient(135deg, #111a38 0%, #0a0e20 62%);
+}
+
+.chooser-tile-lead:hover {
+  background:
+    radial-gradient(120% 150% at 86% 16%, rgba(212, 175, 55, 0.42), transparent 62%),
+    linear-gradient(135deg, #16214a 0%, #0a0e20 62%);
+}
+
+/* The box the drawing is fitted into, rather than the drawing's own size.
+   Sized by width alone it was taller than the tile on a wide one and the
+   roof of the car was cut off -- 37 pixels of it at tablet width. With a top
+   and a bottom the box can never exceed the tile, and preserveAspectRatio
+   on the drawing scales it down to fit and parks it in the bottom-right
+   corner rather than stretching it. */
+.chooser-art {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  /* Both, explicitly. An svg is a replaced element: given a top and a bottom
+     but no height it takes its height from its own proportions and ignores
+     the bottom, which is how the roof of the car came to be 75 pixels above
+     the tile. preserveAspectRatio on the drawing fits it inside this box and
+     parks it in the bottom-right corner. */
+  width: 54%;
+  height: 74%;
+  pointer-events: none;
+}
+
+.chooser-photo {
+  position: absolute;
+  right: 0;
+  bottom: 2px;
+  width: 50%;
+  max-width: 220px;
+  pointer-events: none;
+}
+
+/* The lead tile is twice as wide, so the same share of it would draw a car
+   across half the card. */
+.chooser-tile-lead .chooser-art {
+  width: 40%;
+  height: 78%;
+}
+
+.chooser-tile-lead .chooser-photo {
+  width: 42%;
+  right: 4px;
+  bottom: 6px;
+}
+
+/* An ordinary photograph is a rectangle, and a rectangle dropped in the
+   corner of a rounded tile looks dropped. Faded out towards the words it
+   sits in the tile, and the owner can upload whatever they actually have
+   rather than a cut-out on transparency. */
+.chooser-photo {
+  height: 86%;
+  object-fit: cover;
+  border-radius: 10px;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 48%);
+  mask-image: linear-gradient(to right, transparent, #000 48%);
+}
+
+.chooser-ribbon {
+  position: absolute;
+  top: 21px;
+  right: -22px;
+  width: 104px;
+  padding: 3px 0;
+  transform: rotate(45deg);
+  background: linear-gradient(135deg, var(--color-gold-light), var(--color-gold-mid));
+  color: var(--color-navy);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+  text-align: center;
+  text-transform: uppercase;
+  pointer-events: none;
+  box-shadow: 0 2px 6px rgba(5, 7, 15, 0.22);
+}
+
+/* A tile is a link, so it answers to a keyboard too. The ring goes outside
+   the tile rather than inside it: the inside is the drawing. */
+.chooser-tile:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------------------
+   Offers
+
+   A banner-shaped card rather than the service cards' portrait: an offer is
+   one sentence and a code, and a tall card would be mostly empty. Wider than
+   the rail's default so three fit across a laptop.
+--------------------------------------------------------------------------- */
+
+.offer-item {
+  width: 20rem;
+}
+
+@media (min-width: 640px) {
+  .offer-item {
+    width: 23rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  /* Three and their two gaps come to exactly the column, so the rail is not
+     showing a sliver of a fourth card -- which reads as a fault rather than
+     as there being more. */
+  .offer-item {
+    width: calc((100% - 2 * 1.25rem) / 3);
+  }
+}
+
+.offer-card {
+  min-height: 15rem;
+  background:
+    radial-gradient(130% 120% at 85% 0%, rgba(212, 175, 55, 0.28), transparent 58%),
+    linear-gradient(140deg, #16214a 0%, #0a0e20 58%);
+  border: 1px solid rgba(212, 175, 55, 0.26);
+  box-shadow: 0 10px 30px rgba(16, 24, 40, 0.14);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+a.offer-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(212, 175, 55, 0.6);
+  box-shadow: 0 16px 40px rgba(16, 24, 40, 0.2);
+}
+
+/* With a photograph behind it the words need their own ground, or an offer
+   lands on a white sky and is unreadable on exactly the cards someone took
+   the trouble to illustrate. */
+.offer-scrim {
+  background: linear-gradient(to top, rgba(7, 10, 22, 0.94) 18%, rgba(7, 10, 22, 0.55) 62%, rgba(7, 10, 22, 0.3) 100%);
+}
+
+.offer-badge {
+  background: linear-gradient(135deg, var(--color-gold-light), var(--color-gold-mid));
+  color: var(--color-navy);
+}
+
+/* A dashed rule says "copy this" the way a torn-off coupon does. */
+.offer-code {
+  border: 1px dashed rgba(240, 208, 96, 0.65);
+  background: rgba(212, 175, 55, 0.12);
+  color: var(--color-gold-light);
+}
+
+/* ---------------------------------------------------------------------------
+   Why hire from us: the collage, the claims and the reviews
+--------------------------------------------------------------------------- */
+
+/* A white edge and a shadow, so each frame reads as a print laid on the page
+   rather than as a hole cut in it -- which is what makes an offset grid of
+   snapshots look arranged instead of misaligned. */
+.why-photo {
+  border: 4px solid #fff;
+  box-shadow: 0 10px 26px rgba(16, 24, 40, 0.14);
+}
+
+.why-claim {
+  border: 1px solid var(--color-line);
+  box-shadow: 0 6px 18px rgba(16, 24, 40, 0.05);
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    border-color 0.22s ease;
+}
+
+.why-claim:hover {
+  transform: translateY(-2px);
+  border-color: rgba(212, 175, 55, 0.5);
+  box-shadow: 0 12px 28px rgba(16, 24, 40, 0.1);
+}
+
+/* The cards flow down one column and across to the next, so a short review
+   does not leave a hole under it the height of the longest one in its row.
+   Each card has to stay whole: a quotation split across two columns is a
+   quotation nobody finishes. */
+.review-card-wrap {
+  display: block;
+  break-inside: avoid;
+  margin-bottom: 0.75rem;
+}
+
+.review-card {
+  border: 1px solid var(--color-line);
+  box-shadow: 0 6px 18px rgba(16, 24, 40, 0.05);
+}
+
+.review-card blockquote {
+  /* Four lines, then an ellipsis. A review is somebody else's paragraph and
+     some of them run long; the column is here to show that there are many,
+     not to be read end to end. */
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ---------------------------------------------------------------------------
+   The service cards' picture
+
+   A leaf rather than a rectangle, and under the words rather than above
+   them. Six rectangles in a row read as a gallery; the shape is what says
+   these are cards about something rather than photographs of it.
+--------------------------------------------------------------------------- */
+
+.service-leaf-wrap {
+  position: relative;
+}
+
+.art-frame.service-leaf {
+  aspect-ratio: 16 / 10;
+  border-radius: 62% 38% 44% 56% / 52% 58% 42% 48%;
+  box-shadow: 0 12px 28px rgb(16 24 40 / 0.16);
+}
+
+/* The gold hairline the rectangular frames carry runs along the bottom edge,
+   which on a curve cuts straight across it. */
+.art-frame.service-leaf::after {
+  content: none;
+}
+
+/* A thin stroke sitting a little off the picture, the way a pencil line sits
+   beside a cut-out. Offset unevenly on purpose: traced exactly it reads as a
+   border that has failed to line up. */
+.service-leaf-wrap::after {
+  content: '';
+  position: absolute;
+  inset: -6px 1.625rem 1.625rem 0.875rem;
+  border: 1.5px solid rgb(212 175 55 / 0.55);
+  border-radius: 62% 38% 44% 56% / 52% 58% 42% 48%;
+  pointer-events: none;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.group:hover .service-leaf-wrap::after {
+  transform: rotate(-2.5deg) scale(1.02);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .service-leaf-wrap::after,
+  .group:hover .service-leaf-wrap::after {
+    transition: none;
+    transform: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   The closing band
+--------------------------------------------------------------------------- */
+
+.cta-band {
+  background:
+    radial-gradient(90% 120% at 78% 12%, rgb(212 175 55 / 0.26), transparent 58%),
+    linear-gradient(135deg, #16214a 0%, #0a0e20 60%);
+  border: 1px solid rgb(212 175 55 / 0.28);
+  box-shadow: 0 18px 48px rgb(16 24 40 / 0.18);
+}
+
+.cta-car {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .cta-car {
+    display: block;
+    position: absolute;
+    right: -1rem;
+    bottom: 1rem;
+    width: 16rem;
+    opacity: 0.9;
+    pointer-events: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .cta-car {
+    width: 20rem;
+    right: 2.5rem;
+    bottom: 1.5rem;
+  }
+}
+
+/* The group buttons above the questions. */
+.faq-chip {
+  border-radius: 999px;
+  border: 1px solid rgb(255 255 255 / 0.18);
+  background: rgb(255 255 255 / 0.07);
+  color: rgb(255 255 255 / 0.8);
+  padding: 0.4rem 0.9rem;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.faq-chip:hover {
+  border-color: rgb(212 175 55 / 0.5);
+  color: #fff;
+}
+
+.faq-chip[aria-pressed='true'] {
+  background: linear-gradient(135deg, var(--color-gold-light), var(--color-gold-mid));
+  border-color: transparent;
+  color: var(--color-navy);
+}
+
+.faq-chip:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+}
+
+/* The picture between the steps is drawn 400 by 200, and the leaf it sits in
+   is 4:5 -- so on a phone the frame slice-crops a quarter of the drawing's
+   width and the result is an abstract shape rather than a scene. Landscape
+   below the tablet, where the column is the whole screen and there is width
+   to give it. */
+@media (max-width: 639px) {
+  .art-frame.how-leaf {
+    aspect-ratio: 5 / 4;
+  }
+}
