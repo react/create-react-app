@@ -2692,3 +2692,254 @@ a.offer-card:hover {
   stroke: rgb(212 175 55 / 0.4);
   stroke-width: 0.8;
 }
+
+/* ---------------------------------------------------------------------------
+   Where people go
+
+   Five piles of snapshots, one per kind of place, pinned to a board with the
+   district's landmarks drawn along the back of it. It was a rail of nineteen
+   cards crawling past, which answered "what is there" by listing everything
+   and grouping nothing.
+--------------------------------------------------------------------------- */
+
+.places-skyline {
+  position: absolute;
+  right: 0;
+  bottom: -3.5rem;
+  left: 0;
+  width: 100%;
+  color: var(--color-navy);
+  opacity: 0.13;
+  pointer-events: none;
+  /* Below the piles, and out of the way of the section's own background. */
+  z-index: 0;
+  /* Nothing to draw on under a tablet: the piles sit two across and fill the
+     band, so the line work would run behind them and show only as noise. */
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .places-skyline {
+    display: block;
+  }
+}
+
+.places-piles {
+  z-index: 1;
+}
+
+.place-pile {
+  list-style: none;
+}
+
+@media (min-width: 1024px) {
+  .place-pile {
+    /* Each pile hangs at its own height, which is what makes five of them a
+       board rather than a row. */
+    margin-top: var(--pile-lift, 0);
+    flex: 0 1 13.5rem;
+    max-width: 13.5rem;
+  }
+}
+
+.place-pile-link {
+  position: relative;
+  display: block;
+  transform: rotate(var(--pile-tilt, 0deg));
+  transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.place-pile-link:hover,
+.place-pile-link:focus-visible {
+  transform: rotate(0deg) translateY(-6px);
+}
+
+.place-pile-link:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 6px;
+  border-radius: 10px;
+}
+
+/* The pile itself. A fixed shape, with every snapshot filling it and fanned
+   out by its own rotation -- so the box does not grow when one of them is
+   turned further than the others. */
+.place-stack {
+  position: relative;
+  display: block;
+  aspect-ratio: 1 / 1.14;
+}
+
+.snap {
+  position: absolute;
+  inset: 0;
+  display: block;
+  padding: 7px 7px 0;
+  border-radius: 7px;
+  background: #fff;
+  box-shadow: 0 8px 22px rgb(16 24 40 / 0.16);
+  transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Fanned back to front. The middle one leans the other way, which is what
+   stops three cards at three angles reading as one card with a thick edge. */
+/* The fan is a share of the pile's own width, so on a phone -- where two
+   piles share the screen -- the cards behind do not swing out past the edge
+   of the band and get clipped by it. */
+.snap-2 {
+  transform: rotate(-7deg) translate(-7%, 5px);
+}
+
+.snap-1 {
+  transform: rotate(6deg) translate(7.5%, 2px);
+}
+
+@media (min-width: 1024px) {
+  .snap-2 {
+    transform: rotate(-9.5deg) translate(-15px, 7px);
+  }
+
+  .snap-1 {
+    transform: rotate(7.5deg) translate(16px, 3px);
+  }
+}
+
+.snap-0 {
+  transform: rotate(-1.5deg);
+}
+
+.place-pile-link:hover .snap-2 {
+  transform: rotate(-13.5deg) translate(-22px, 9px);
+}
+
+.place-pile-link:hover .snap-1 {
+  transform: rotate(11.5deg) translate(24px, 4px);
+}
+
+.place-pile-link:hover .snap-0 {
+  transform: rotate(-1deg) translateY(-2px);
+}
+
+.snap-frame {
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  border-radius: 3px;
+  background: var(--color-navy-deep);
+}
+
+.snap-photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* A place nobody has photographed yet still gets a card with its name under
+   it, so a pile is never short and the name is never missing. */
+/* A navy panel was the first try and it read as a photograph that had failed
+   to load -- a black rectangle in a white frame is what a broken image looks
+   like. Sand, with the suggestion of a ridge drawn on it: plainly a card
+   waiting for a picture rather than a picture that did not arrive. */
+.snap-blank {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(168deg, #fffdf8, #f3e4c4 72%);
+}
+
+.snap-blank::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  /* Two hills rising from the bottom edge, not two strokes crossing: the
+     first attempt drew an X, which is the mark for "no image" in every
+     interface anybody has used. */
+  background:
+    radial-gradient(54% 46% at 31% 112%, rgb(138 90 0 / 0.18) 0 59%, transparent 60%),
+    radial-gradient(46% 40% at 69% 116%, rgb(138 90 0 / 0.13) 0 61%, transparent 62%),
+    radial-gradient(62% 48% at 50% 124%, rgb(212 175 55 / 0.3), transparent 74%);
+}
+
+.snap-caption {
+  display: block;
+  padding: 7px 3px 9px;
+  color: var(--color-ink-dim);
+  font-size: 10.5px;
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: center;
+  /* Two lines at most: a long name is still a caption, not a paragraph. */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* The card pinned to the front of the pile, which is what the pile is of. */
+.place-tag {
+  position: absolute;
+  top: -0.9rem;
+  left: 50%;
+  z-index: 3;
+  display: block;
+  min-width: 78%;
+  padding: 0.55rem 0.9rem 0.5rem;
+  border: 1px solid var(--color-line);
+  border-radius: 11px;
+  background: #fff;
+  box-shadow: 0 10px 24px rgb(16 24 40 / 0.18);
+  text-align: center;
+  /* Turned against the pile, so the card and the snapshots under it are not
+     two things at the same angle. */
+  transform: translateX(-50%) rotate(calc(var(--pile-tilt, 0deg) * -1.7));
+  transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.place-pile-link:hover .place-tag {
+  transform: translateX(-50%) rotate(0deg);
+}
+
+.place-tack {
+  position: absolute;
+  top: -0.55rem;
+  left: 50%;
+  width: 0.85rem;
+  height: 0.85rem;
+  border-radius: 50%;
+  transform: translateX(-50%);
+  background: radial-gradient(60% 60% at 35% 30%, #f6dd86, var(--color-gold) 55%, var(--color-gold-mid));
+  box-shadow:
+    0 2px 5px rgb(16 24 40 / 0.4),
+    inset 0 -1px 2px rgb(10 14 32 / 0.25);
+}
+
+.place-tag-name {
+  display: block;
+  color: var(--color-navy);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.place-tag-count {
+  display: block;
+  margin-top: 1px;
+  color: var(--color-ink-faint);
+  font-size: 10.5px;
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .place-pile-link,
+  .snap,
+  .place-tag,
+  .place-pile-link:hover .snap-0,
+  .place-pile-link:hover .snap-1,
+  .place-pile-link:hover .snap-2,
+  .place-pile-link:hover .place-tag {
+    transition: none;
+  }
+}

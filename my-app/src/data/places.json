@@ -1,6 +1,6 @@
 {
   "note": "Places worth driving to, baked into the build so /places is not served to a crawler as 'The list is on its way'. Refreshed from the panel by scripts/fetch-places.mjs, which keeps this file when the panel cannot be reached. Distances are approximate road distances from Nagercoil, which is where the vehicles are kept -- a straight-line figure is not the number anybody plans a day around.",
-  "fetched": "2026-11-14T10:46:29.004Z",
+  "fetched": "2026-11-14T11:45:33.078Z",
   "live": true,
   "places": [
     {
@@ -8,28 +8,32 @@
       "name": "Vivekananda Rock Memorial",
       "category": "Coast & sea",
       "blurb": "A sacred island monument built where Swami Vivekananda meditated. Reached by ferry from the shore.",
-      "mapUrl": "https://www.google.com/maps/search/?api=1&query=Vivekananda%20Rock%20Memorial%2C%20Kanyakumari%2C%20Tamil%20Nadu"
+      "mapUrl": "https://www.google.com/maps/search/?api=1&query=Vivekananda%20Rock%20Memorial%2C%20Kanyakumari%2C%20Tamil%20Nadu",
+      "photo": "/place-photos/p1-4dc8dda0dbcbefa9.avif"
     },
     {
       "id": "2",
       "name": "Thiruvalluvar Statue",
       "category": "Coast & sea",
       "blurb": "A 133-foot stone sculpture of the ancient Tamil poet, standing on its own islet beside the rock memorial.",
-      "mapUrl": "https://www.google.com/maps/search/?api=1&query=Thiruvalluvar%20Statue%2C%20Kanyakumari%2C%20Tamil%20Nadu"
+      "mapUrl": "https://www.google.com/maps/search/?api=1&query=Thiruvalluvar%20Statue%2C%20Kanyakumari%2C%20Tamil%20Nadu",
+      "photo": "/place-photos/p2-0da55704f1786bd2.jpg"
     },
     {
       "id": "3",
       "name": "Triveni Sangamam",
       "category": "Coast & sea",
       "blurb": "The meeting point of the Arabian Sea, the Bay of Bengal and the Indian Ocean.",
-      "mapUrl": "https://www.google.com/maps/search/?api=1&query=Triveni%20Sangamam%2C%20Kanyakumari%2C%20Tamil%20Nadu"
+      "mapUrl": "https://www.google.com/maps/search/?api=1&query=Triveni%20Sangamam%2C%20Kanyakumari%2C%20Tamil%20Nadu",
+      "photo": "/place-photos/p3-36a7bd30e5a875bd.jpg"
     },
     {
       "id": "4",
       "name": "Kanyakumari Beach",
       "category": "Coast & sea",
       "blurb": "One of the few places in India where you can watch both sunrise and sunset over the sea.",
-      "mapUrl": "https://www.google.com/maps/search/?api=1&query=Kanyakumari%20Beach%2C%20Kanyakumari%2C%20Tamil%20Nadu"
+      "mapUrl": "https://www.google.com/maps/search/?api=1&query=Kanyakumari%20Beach%2C%20Kanyakumari%2C%20Tamil%20Nadu",
+      "photo": "/place-photos/p4-a7b5144dc9f41f94.webp"
     },
     {
       "id": "5",
@@ -43,28 +47,32 @@
       "name": "Kanyakumari Glass Bridge",
       "category": "Viewpoints",
       "blurb": "A recently opened glass walkway over the sea, linking the shore towards the monuments.",
-      "mapUrl": "https://www.google.com/maps/search/?api=1&query=Kanyakumari%20Glass%20Bridge%2C%20Kanyakumari%2C%20Tamil%20Nadu"
+      "mapUrl": "https://www.google.com/maps/search/?api=1&query=Kanyakumari%20Glass%20Bridge%2C%20Kanyakumari%2C%20Tamil%20Nadu",
+      "photo": "/place-photos/p6-88727cc5b913375e.jpg"
     },
     {
       "id": "7",
       "name": "View Tower",
       "category": "Viewpoints",
       "blurb": "A helical pedestrian ramp giving an elevated 360-degree view of the coast.",
-      "mapUrl": "https://www.google.com/maps/search/?api=1&query=View%20Tower%2C%20Kanyakumari%2C%20Tamil%20Nadu"
+      "mapUrl": "https://www.google.com/maps/search/?api=1&query=View%20Tower%2C%20Kanyakumari%2C%20Tamil%20Nadu",
+      "photo": "/place-photos/p7-fa20fd2fd5bcafb8.jpg"
     },
     {
       "id": "8",
       "name": "Bhagavathy Amman Temple",
       "category": "Temples & heritage",
       "blurb": "An ancient seaside temple dedicated to the virgin goddess the town is named after.",
-      "mapUrl": "https://www.google.com/maps/search/?api=1&query=Bhagavathy%20Amman%20Temple%2C%20Kanyakumari%2C%20Tamil%20Nadu"
+      "mapUrl": "https://www.google.com/maps/search/?api=1&query=Bhagavathy%20Amman%20Temple%2C%20Kanyakumari%2C%20Tamil%20Nadu",
+      "photo": "/place-photos/p8-dd2998d2c2c0cf1f.jpg"
     },
     {
       "id": "9",
       "name": "Mahatma Gandhi Mandapam",
       "category": "Temples & heritage",
       "blurb": "A pink memorial built on the spot where Gandhi's ashes were kept before immersion.",
-      "mapUrl": "https://www.google.com/maps/search/?api=1&query=Mahatma%20Gandhi%20Mandapam%2C%20Kanyakumari%2C%20Tamil%20Nadu"
+      "mapUrl": "https://www.google.com/maps/search/?api=1&query=Mahatma%20Gandhi%20Mandapam%2C%20Kanyakumari%2C%20Tamil%20Nadu",
+      "photo": "/place-photos/mahatma-gandhi-mandapam-places-to-visit-kanyakumari-51438e77a42d4a59.jpg"
     },
     {
       "id": "10",
@@ -127,7 +135,8 @@
       "name": "Sanguthurai Beach",
       "category": "Quieter beaches",
       "blurb": "A clean, calm beach with white sand, known locally for its kite flying.",
-      "mapUrl": "https://www.google.com/maps/search/?api=1&query=Sanguthurai%20Beach%2C%20Kanyakumari%2C%20Tamil%20Nadu"
+      "mapUrl": "https://www.google.com/maps/search/?api=1&query=Sanguthurai%20Beach%2C%20Kanyakumari%2C%20Tamil%20Nadu",
+      "photo": "/place-photos/sanguthurai-beach-places-to-visit-kanyakumari-82926a1070ffe9e3.png"
     },
     {
       "id": "19",

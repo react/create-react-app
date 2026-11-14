@@ -42,6 +42,15 @@ function clean(p) {
     // check is repeated because a link that can carry javascript: is a hole
     // wherever it is filled from.
     mapUrl: /^https?:\/\//i.test(p.mapUrl ?? '') ? p.mapUrl : '',
+    // The panel serves these from the site's own root -- /place-photos/... --
+    // so the address is as good in the built HTML as it is in the browser,
+    // and baking it puts the pictures in the markup a crawler reads. Left
+    // out before, which is why the prerendered places page was nineteen
+    // captions with nothing above them.
+    //
+    // Only a root-relative path from the panel is taken. Anything else is an
+    // address this build cannot vouch for, and it ends up in an <img src>.
+    photo: typeof p.photo === 'string' && /^\/[\w./-]+$/.test(p.photo) ? p.photo : undefined,
   };
 }
 
