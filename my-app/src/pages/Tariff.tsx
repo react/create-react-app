@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { dailyRate, orDash } from '../data/cars';
+import { dailyRate, inr, orDash, perDay } from '../data/cars';
 import { useFleet } from '../lib/useFleet';
 import { PageHeader } from './PageHeader';
 import { BrandPanel } from '../components/BrandPanel';
@@ -10,6 +10,30 @@ import tariffFaq from '../data/tariff-faq.json';
 // questions this page shows and the ones in its structured data cannot
 // disagree about which of the panel's the home page already answered.
 import { HOME_FAQ_SHOWN } from '../data/faq-shown.mjs';
+
+/**
+ * What a longer hire costs, and what that is a day.
+ *
+ * Two figures in one cell because they answer two different questions and
+ * neither one does for both: the total is what gets paid, and the per-day is
+ * the only form that can be compared with the daily rate in the column
+ * beside it.
+ */
+function Period({ label, total, days }: { label: string; total?: number; days: number }) {
+  const each = perDay(total, days);
+  return (
+    <td role="cell" data-label={label} className="px-5 py-4 text-ink-dim">
+      {each === null ? (
+        '—'
+      ) : (
+        <>
+          <span className="font-semibold text-navy">{inr(total!)}</span>
+          <span className="tariff-each block text-xs text-ink-faint">{inr(each)} a day</span>
+        </>
+      )}
+    </td>
+  );
+}
 
 export function Tariff() {
   const fleet = useFleet();
@@ -57,16 +81,15 @@ export function Tariff() {
               <thead role="rowgroup">
                 <tr role="row" className="border-b border-line bg-cream/60 text-xs tracking-wide text-ink-faint uppercase">
                   <th role="columnheader" scope="col" className="px-5 py-3 font-semibold">Car</th>
-                  {/* "Weekly" and "Monthly" are per-day figures too. That was
-                      a footnote under the table, which is the wrong place for
-                      the thing that stops a column being read as a total. */}
                   <th role="columnheader" scope="col" className="px-5 py-3 font-semibold">Per day</th>
-                  <th role="columnheader" scope="col" className="px-5 py-3 font-semibold">
-                    Weekly <span className="normal-case">(per day)</span>
-                  </th>
-                  <th role="columnheader" scope="col" className="px-5 py-3 font-semibold">
-                    Monthly <span className="normal-case">(per day)</span>
-                  </th>
+                  {/* These two are what the whole period costs, and the
+                      column used to say "(per day)" under the heading --
+                      ₹7,000 against a car that costs ₹1,000 a day, printed
+                      as a daily rate. The total is the price and the per-day
+                      figure under it is the one that can be held against the
+                      column to its left. */}
+                  <th role="columnheader" scope="col" className="px-5 py-3 font-semibold">7 days</th>
+                  <th role="columnheader" scope="col" className="px-5 py-3 font-semibold">30 days</th>
                   <th role="columnheader" scope="col" className="px-5 py-3 font-semibold">KM / day</th>
                   <th role="columnheader" scope="col" className="px-5 py-3 font-semibold">Extra KM</th>
                   <th role="columnheader" scope="col" className="px-5 py-3 font-semibold">Deposit</th>
@@ -91,12 +114,8 @@ export function Tariff() {
                     <td role="cell" data-label="Per day" className="tariff-lead px-5 py-4 font-semibold text-navy">
                       {dailyRate(car)}
                     </td>
-                    <td role="cell" data-label="Weekly, per day" className="px-5 py-4 text-ink-dim">
-                      {orDash(car.rateWeekly)}
-                    </td>
-                    <td role="cell" data-label="Monthly, per day" className="px-5 py-4 text-ink-dim">
-                      {orDash(car.rateMonthly)}
-                    </td>
+                    <Period label="7 days" total={car.rateWeekly} days={7} />
+                    <Period label="30 days" total={car.rateMonthly} days={30} />
                     <td role="cell" data-label="KM / day" className="px-5 py-4 text-ink-dim">
                       {car.kmLimitPerDay > 0 ? `${car.kmLimitPerDay} km` : '—'}
                     </td>
@@ -132,9 +151,10 @@ export function Tariff() {
         )}
 
         <p className="mt-6 text-sm leading-relaxed text-ink-faint">
-          The deposit is refundable and returned after the car comes back, less
-          any extra-KM charges or damage. There is no booking fee on top of
-          these figures.
+          The 7-day and 30-day figures are what the whole hire costs; the
+          smaller figure under each is what that works out at per day. The
+          deposit is refundable and returned after the car comes back, less any
+          extra-KM charges or damage. There is no booking fee on top.
         </p>
 
         {/* The table raises three questions and answers none of them in full.

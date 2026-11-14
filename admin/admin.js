@@ -2009,15 +2009,35 @@ function updateBookingDurationPreview() {
    worse than one that never suggested anything. The button is the consent.
 --------------------------------------------------------------------------- */
 
-/** The band the hire falls into, times the days. Null when there is no rate. */
+/**
+ * The band the hire falls into, and what it comes to.
+ *
+ * price7, price15 and price30 are what that whole period costs -- ₹7,000 for
+ * seven days against a car whose day rate is ₹1,000 -- and this multiplied
+ * them by the days as though they were daily rates. A week of that Santro
+ * was being suggested at ₹49,000.
+ *
+ * Each band is turned into a per-day figure first, so seven days of a ₹7,000
+ * week comes to exactly ₹7,000 and ten days comes to ten of the same days.
+ * The daily rate is already per-day and divides by one.
+ */
 function rentalForDays(car, days) {
   if (!car || !days) return null;
-  const band = days >= 30 && car.price30 ? car.price30
-    : days >= 15 && car.price15 ? car.price15
-    : days >= 7 && car.price7 ? car.price7
-    : car.price;
-  const rate = Number(band) || 0;
-  return rate > 0 ? { rate, total: rate * days } : null;
+
+  const band = days >= 30 && car.price30 ? { total: car.price30, over: 30 }
+    : days >= 15 && car.price15 ? { total: car.price15, over: 15 }
+    : days >= 7 && car.price7 ? { total: car.price7, over: 7 }
+    : { total: car.price, over: 1 };
+
+  const periodTotal = Number(band.total) || 0;
+  if (periodTotal <= 0) return null;
+
+  const rate = Math.round(periodTotal / band.over);
+  // Exactly the band's length is quoted at exactly the figure that was
+  // typed: ₹25,000 for thirty days, not ₹24,990 because ₹833.33 rounded
+  // down. Any other length is that many of the same days.
+  const total = days === band.over ? periodTotal : rate * days;
+  return { rate, total };
 }
 
 function updateRentalSuggestion(days) {

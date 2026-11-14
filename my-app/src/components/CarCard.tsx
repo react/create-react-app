@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { dailyRate, inr, type Car } from '../data/cars';
+import { dailyRate, inr, perDay, type Car } from '../data/cars';
 import { carPhoto } from '../lib/carPhoto';
 import { SectionArt } from './art/SectionArt';
 import { WhatsAppButton } from './WhatsAppButton';
@@ -185,8 +185,13 @@ export function CarCard({ car, offstage = false }: { car: Car; offstage?: boolea
                 per day
               </p>
             ) : null}
-            {car.rateMonthly ? (
-              <p className="mt-1 text-xs text-gold-deep">{inr(car.rateMonthly)} monthly</p>
+            {/* The per-day figure, not the ₹45,000 total: this line sits
+                directly under a daily rate, and two numbers of different
+                kinds stacked on each other read as one. */}
+            {perDay(car.rateMonthly, 30) !== null ? (
+              <p className="mt-1 text-xs text-gold-deep">
+                {inr(perDay(car.rateMonthly, 30)!)} a day for 30
+              </p>
             ) : null}
           </div>
 

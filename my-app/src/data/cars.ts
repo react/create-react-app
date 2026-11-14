@@ -37,9 +37,17 @@ export interface Car {
    * one figure. Display only -- rateDaily is still what is charged.
    */
   rateDailyMax?: number;
-  /** Per-day rate when hired for a week or more. Omit if not offered. */
+  /**
+   * What a seven-day hire costs in total. Omit if not offered.
+   *
+   * The whole period, not a daily figure. Both of these were documented as
+   * per-day rates and the panel has always been filled in with totals --
+   * ₹7,000 against a car whose day rate is ₹1,000 -- so every page that
+   * printed one as "per day" was off by a factor of seven. Confirmed with
+   * the owner before this was written down.
+   */
   rateWeekly?: number;
-  /** Per-day rate for a month or more. Omit if not offered. */
+  /** What a thirty-day hire costs in total. Omit if not offered. */
   rateMonthly?: number;
   kmLimitPerDay: number;
   extraKmRate: number;
@@ -85,6 +93,16 @@ export const dailyRate = (car: Pick<Car, 'rateDaily' | 'rateDailyMax'>) =>
     : car.rateDailyMax !== undefined && car.rateDailyMax > car.rateDaily
       ? `${inr(car.rateDaily)} – ${inr(car.rateDailyMax)}`
       : inr(car.rateDaily);
+
+/**
+ * What a period rate works out at per day.
+ *
+ * The figure somebody actually compares with. "₹25,000 for thirty days" and
+ * "₹1,000 a day" are the same offer, and only one of them can be held up
+ * against the daily rate in the column beside it.
+ */
+export const perDay = (total: number | undefined, days: number): number | null =>
+  total && total > 0 && days > 0 ? Math.round(total / days) : null;
 
 /** A figure, or a dash where the panel has none. For the tariff table. */
 export const orDash = (n: number | undefined) => (n && n > 0 ? inr(n) : '—');
